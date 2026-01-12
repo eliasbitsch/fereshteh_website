@@ -12,7 +12,7 @@ interface HeroSectionProps {
 
 export function HeroSection({ availableForWork }: HeroSectionProps) {
   return (
-    <section className="relative flex items-center justify-center overflow-hidden rounded-md py-20 pb-32 md:py-20 md:pb-50">
+    <section id="home" className="relative flex items-center justify-center overflow-hidden rounded-md py-20 pb-32 md:py-20 md:pb-50 scroll-mt-20">
       <GridPattern />
       <ShadowEffect />
 

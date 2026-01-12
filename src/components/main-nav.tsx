@@ -1,22 +1,27 @@
 "use client";
 
 import * as m from "motion/react-m";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { navLinks } from "~/config/site";
-import { useHash } from "~/hooks/use-hash";
+import { useActiveItem } from "~/hooks/use-active-item";
 import { Icons } from "./ui/icons";
 
-function isActive(href: string, hash: string) {
-  return hash === href;
+function isActive(href: string, activeSection: string | null) {
+  if (href === "#") {
+    return activeSection === "home";
+  }
+  return activeSection === href || `#${activeSection}` === href;
 }
 
 export function MainNav() {
-  const hash = useHash();
-  const [hoveredPath, setHoveredPath] = useState(hash);
+  const sectionIds = useMemo(() => ['home', ...navLinks.map(link => link.href.replace('#', ''))], []);
+  const activeSection = useActiveItem(sectionIds);
+  const activeHref = activeSection ? `#${activeSection}` : "";
+  const [hoveredPath, setHoveredPath] = useState(activeHref);
 
   useEffect(() => {
-    setHoveredPath(hash);
-  }, [hash]);
+    setHoveredPath(activeHref);
+  }, [activeHref]);
 
   const handleClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
@@ -39,42 +44,45 @@ export function MainNav() {
 
   return (
     <nav className="ml-6 hidden items-center text-sm md:flex">
-      {allLinks.map((item, index) => (
-        <a
-          className="relative px-3 py-2 text-fg/60 transition-colors hover:text-fg data-[active='true']:text-fg"
-          data-active={isActive(item.href, hash) || (item.href === "#" && !hash)}
-          href={item.href}
-          key={item.href}
-          onClick={(e) => handleClick(e, item.href)}
-          onMouseLeave={() => setHoveredPath(hash)}
-          onMouseOver={() => setHoveredPath(item.href)}
-        >
-          {index === 0 ? (
-            <Icons.Logo className="size-5" />
-          ) : (
-            <span>{item.label}</span>
-          )}
-          {isActive(item.href, hoveredPath) || (item.href === "#" && hoveredPath === "" && !hash) ? (
-            <m.div
-              aria-hidden="true"
-              className="absolute bottom-0 left-0 -z-10 size-full rounded-full bg-muted"
-              layoutId="navbar"
-              transition={{
-                duration: 0.15,
-              }}
-            />
-          ) : null}
-          {isActive(item.href, hash) || (item.href === "#" && !hash) ? (
-            <m.div
-              aria-hidden="true"
-              className="absolute bottom-0 left-0 -z-10 size-full rounded-full bg-muted"
-              transition={{
-                duration: 0.15,
-              }}
-            />
-          ) : null}
-        </a>
-      ))}
+      {allLinks.map((item, index) => {
+        const itemActive = isActive(item.href, activeSection);
+        return (
+          <a
+            className="relative px-3 py-2 text-fg/60 transition-colors hover:text-fg data-[active='true']:text-fg"
+            data-active={itemActive}
+            href={item.href}
+            key={item.href}
+            onClick={(e) => handleClick(e, item.href)}
+            onMouseLeave={() => setHoveredPath(activeHref)}
+            onMouseOver={() => setHoveredPath(item.href)}
+          >
+            {index === 0 ? (
+              <Icons.Logo className="size-5" />
+            ) : (
+              <span>{item.label}</span>
+            )}
+            {isActive(item.href, hoveredPath === "" ? null : hoveredPath.replace('#', '')) ? (
+              <m.div
+                aria-hidden="true"
+                className="absolute bottom-0 left-0 -z-10 size-full rounded-full bg-muted"
+                layoutId="navbar"
+                transition={{
+                  duration: 0.15,
+                }}
+              />
+            ) : null}
+            {itemActive ? (
+              <m.div
+                aria-hidden="true"
+                className="absolute bottom-0 left-0 -z-10 size-full rounded-full bg-muted"
+                transition={{
+                  duration: 0.15,
+                }}
+              />
+            ) : null}
+          </a>
+        );
+      })}
     </nav>
   );
 }

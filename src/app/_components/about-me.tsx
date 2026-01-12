@@ -10,10 +10,7 @@ export function AboutSection() {
 
       <div className="mb-8 max-w-3xl">
         <p className="text-muted-fg leading-relaxed">
-          I'm a full-stack developer based in Vienna, Austria, with a passion
-          for creating elegant and efficient web applications. I specialize in
-          building modern, responsive interfaces and robust backend systems that
-          deliver exceptional user experiences.
+        Welcome to my UI/UX design portfolio! I'm passionate about creating intuitive and visually stunning experiences for users. With a keen eye for detail and a deep understanding of user behavior, I strive to craft designs that not only look beautiful but also function seamlessly. My portfolio showcases a collection of projects where I have combined creativity and user-centered design principles to deliver exceptional results. Each project is a story of problem-solving, creativity, and innovation. Feel free to explore and get in touch to discuss how we can collaborate on your next design venture.
         </p>
       </div>
 
