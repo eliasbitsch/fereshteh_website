@@ -1,0 +1,136 @@
+"use client";
+
+import createGlobe from "cobe";
+import { useEffect, useRef, useState } from "react";
+import { useSpring } from "react-spring";
+import { Icons } from "~/components/ui/icons";
+
+const fadeMask =
+  "radial-gradient(circle at 50% 50%, rgb(0, 0, 0) 60%, rgb(0, 0, 0, 0) 70%)";
+
+export function LocationCard() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const pointerInteracting = useRef<number | null>(null);
+  const pointerInteractionMovement = useRef(0);
+
+  const [{ r }, api] = useSpring(() => ({
+    r: 0,
+    config: {
+      mass: 1,
+      tension: 280,
+
+      friction: 40,
+      precision: 0.001,
+    },
+  }));
+
+  useEffect(() => {
+    let width = 0;
+
+    const onResize = () => {
+      if (canvasRef.current) {
+        width = canvasRef.current.offsetWidth;
+        window.addEventListener("resize", onResize);
+      }
+    };
+    onResize();
+
+    if (!canvasRef.current) {
+      return;
+    }
+
+    const globe = createGlobe(canvasRef.current, {
+      devicePixelRatio: 2,
+      width: width * 2,
+      height: width * 2,
+      phi: 0,
+      theta: 0.45,
+      dark: 1,
+      diffuse: 2,
+
+      mapSamples: 36_000,
+      mapBrightness: 2,
+      baseColor: [0.8, 0.8, 0.8],
+      markerColor: [52 / 255, 199 / 255, 89 / 255],
+      glowColor: [0.5, 0.5, 0.5],
+      markers: [{ location: [48.2082, 16.3738], size: 0.08 }], // Vienna, Austria coordinates
+      scale: 1,
+      onRender: (state) => {
+        state.phi = 4.5 + r.get();
+        state.theta = 0.5;
+        state.width = width * 2;
+        state.height = width * 2;
+      },
+    });
+
+    return () => {
+      globe.destroy();
+    };
+  }, [r]);
+
+  return (
+    <div className="relative flex min-h-60 flex-col gap-6 overflow-hidden rounded-xl border p-4 lg:p-6">
+      <div className="flex items-center gap-2">
+        <Icons.MapPin className="size-4" />
+        <h2 className="font-light text-sm">Vienna, Austria</h2>
+      </div>
+      <div className="absolute inset-0 top-0 mx-auto aspect-square h-[388px] [@media(max-width:420px)]:bottom-[-140px] [@media(max-width:420px)]:h-[320px] [@media(min-width:768px)_and_(max-width:858px)]:h-[350px]">
+        <div className="flex size-full place-content-center place-items-center overflow-visible">
+          <div
+            className="aspect-square w-full max-w-[800px]"
+            style={{
+              WebkitMaskImage: fadeMask,
+              maskImage: fadeMask,
+            }}
+          >
+            <canvas
+              className="size-full cursor-auto select-none"
+              onMouseMove={(e) => {
+                if (pointerInteracting.current !== null) {
+                  const delta = e.clientX - pointerInteracting.current;
+                  pointerInteractionMovement.current = delta;
+                  api.start({
+                    r: delta / 200,
+                  });
+                }
+              }}
+              onPointerDown={(e) => {
+                if (canvasRef.current) {
+                  canvasRef.current.style.cursor = "grabbing";
+                }
+                pointerInteracting.current =
+                  e.clientX - pointerInteractionMovement.current;
+              }}
+              onPointerOut={() => {
+                pointerInteracting.current = null;
+                if (canvasRef.current) {
+                  canvasRef.current.style.cursor = "grab";
+                }
+              }}
+              onPointerUp={() => {
+                pointerInteracting.current = null;
+                if (canvasRef.current) {
+                  canvasRef.current.style.cursor = "grab";
+                }
+              }}
+              onTouchMove={(e) => {
+                if (pointerInteracting.current !== null && e.touches[0]) {
+                  const delta =
+                    e.touches[0].clientX - pointerInteracting.current;
+                  pointerInteractionMovement.current = delta;
+                  api.start({
+                    r: delta / 100,
+                  });
+                }
+              }}
+              ref={canvasRef}
+              style={{
+                contain: "layout paint size",
+              }}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

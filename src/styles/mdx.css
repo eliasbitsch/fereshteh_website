@@ -1,0 +1,52 @@
+figure.shiki.shiki-themes code {
+  padding: 0;
+  background-color: transparent;
+}
+
+figure.shiki.shiki-themes .line {
+  padding-inline: 0.75rem;
+  width: 100%;
+  display: inline-block;
+
+  &.highlighted {
+    background-color: var(--color-muted);
+  }
+}
+
+.shiki.shiki-themes span {
+  color: light-dark(var(--shiki-light), var(--shiki-dark));
+}
+
+.mdx > .steps:first-child > h3:first-child {
+  margin-top: 0;
+}
+
+.mdx > div:where([dir], [data-orientation]):first-child {
+  margin-top: 0;
+}
+
+.steps > :where(h2, h3) {
+  margin: 2rem 0 1rem;
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.5;
+  counter-increment: step;
+
+  &::before {
+    position: absolute;
+    width: 2.25rem;
+    height: 2.25rem;
+    background-color: var(--color-muted);
+    border-radius: calc(infinity * 1px);
+    font-family: var(--font-mono);
+    font-weight: 300;
+    display: grid;
+    place-content: center;
+    text-indent: -1px;
+    border-width: 4px;
+    border-color: var(--color-bg);
+    margin-left: -50px;
+    margin-top: -0.25rem;
+    content: counter(step);
+  }
+}
