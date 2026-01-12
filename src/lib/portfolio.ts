@@ -23,8 +23,8 @@ export function getPortfolioItems(): PortfolioItem[] {
   // Map each PDF to a portfolio item
   const items: PortfolioItem[] = pdfFiles.map((pdfFile) => {
     const baseName = path.basename(pdfFile, ".pdf");
-    // Extract title - take everything before the first semicolon
-    const title = baseName.split(";")[0].trim();
+    // Use the full base name as title
+    const title = baseName;
 
     // Try to find a matching thumbnail
     let thumbnailPath = "/thumbnails/placeholder.png"; // Default fallback
@@ -32,14 +32,10 @@ export function getPortfolioItems(): PortfolioItem[] {
     if (fs.existsSync(thumbnailsDir)) {
       const thumbnailExtensions = [".png", ".jpg", ".jpeg", ".webp", ".avif"];
 
-      // Try several filename candidates to account for chars like semicolons/spaces
-      const titleOnly = baseName.split(";")[0].trim();
-      const slug = titleOnly
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/(^-|-$)/g, "");
+      // Try to find thumbnail with lowercase version of the filename
+      const lowercaseBase = baseName.toLowerCase();
 
-      const candidates = [baseName, titleOnly, slug];
+      const candidates = [baseName, lowercaseBase];
 
       outer: for (const candidate of candidates) {
         for (const ext of thumbnailExtensions) {
