@@ -4,6 +4,7 @@ import * as m from "motion/react-m";
 import { useEffect, useMemo, useState } from "react";
 import { navLinks } from "~/config/site";
 import { useActiveItem } from "~/hooks/use-active-item";
+import { getBasePath } from "~/lib/get-base-path";
 import { Icons } from "./ui/icons";
 
 function isActive(href: string, activeSection: string | null) {
@@ -28,14 +29,15 @@ export function MainNav() {
     href: string
   ) => {
     e.preventDefault();
+    const basePath = getBasePath();
     if (href === "#") {
       window.scrollTo({ top: 0, behavior: "smooth" });
-      window.history.pushState(null, "", "/");
+      window.history.pushState(null, "", basePath || "/");
     } else {
       const element = document.querySelector(href);
       if (element) {
         element.scrollIntoView({ behavior: "smooth" });
-        window.history.pushState(null, "", href);
+        window.history.pushState(null, "", `${basePath}${href}`);
       }
     }
   };
