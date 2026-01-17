@@ -4,6 +4,7 @@ import Image from "next/image";
 import { BadgeAnimated } from "~/components/ui/badge-animated";
 import { LinkButton } from "~/components/ui/button";
 import { Icons } from "~/components/ui/icons";
+import { withBasePath } from "~/lib/get-base-path";
 import { ScrollIndicator } from "./scroll-indicator";
 
 interface HeroSectionProps {
@@ -20,7 +21,7 @@ export function HeroSection({ availableForWork }: HeroSectionProps) {
         <div className="grid justify-items-center gap-4">
           <div className="size-[250px] animate-delay-100 animate-fade-up">
             <Image
-              src="/fereshteh_portrait.avif"
+              src={withBasePath("/fereshteh_portrait.avif")}
               alt="Fereshteh Portrait"
               width={250}
               height={250}
@@ -45,7 +46,7 @@ export function HeroSection({ availableForWork }: HeroSectionProps) {
         <div className="flex animate-delay-400 animate-fade-up items-center justify-center gap-5">
           <LinkButton
             className="group rounded-full"
-            href="/documents/cv_Fereshteh_Hosseini.pdf"
+            href={withBasePath("/documents/cv_Fereshteh_Hosseini.pdf")}
             rel="noopener noreferrer"
             target="_blank"
           >

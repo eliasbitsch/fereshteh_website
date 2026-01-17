@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { withBasePath } from "./get-base-path";
 
 export interface PortfolioItem {
   title: string;
@@ -28,7 +29,7 @@ export function getPortfolioItems(): PortfolioItem[] {
     const title = baseName;
 
     // Try to find a matching thumbnail
-    let thumbnailPath = "/thumbnails/placeholder.png"; // Default fallback
+    let thumbnailPath = withBasePath("/thumbnails/placeholder.png"); // Default fallback
 
     if (fs.existsSync(thumbnailsDir)) {
       const thumbnailExtensions = [".png", ".jpg", ".jpeg", ".webp", ".avif"];
@@ -44,7 +45,7 @@ export function getPortfolioItems(): PortfolioItem[] {
           const thumbnailFullPath = path.join(thumbnailsDir, thumbnailFile);
 
           if (fs.existsSync(thumbnailFullPath)) {
-            thumbnailPath = `/thumbnails/${thumbnailFile}`;
+            thumbnailPath = withBasePath(`/thumbnails/${thumbnailFile}`);
             break outer;
           }
         }
@@ -61,13 +62,13 @@ export function getPortfolioItems(): PortfolioItem[] {
       const webpFullPath = path.join(portfolioImagesDir, webpFile);
 
       if (fs.existsSync(webpFullPath)) {
-        imagePath = `/portfolio-images/${webpFile}`;
+        imagePath = withBasePath(`/portfolio-images/${webpFile}`);
       }
     }
 
     return {
       title,
-      pdfPath: `/portfolio/${pdfFile}`,
+      pdfPath: withBasePath(`/portfolio/${pdfFile}`),
       thumbnailPath,
       imagePath,
     };
