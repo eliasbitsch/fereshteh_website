@@ -8,6 +8,7 @@ const withMDX = createMDX();
 const config: NextConfig = {
   output: 'export',
   basePath: process.env.NODE_ENV === 'production' ? '/fereshteh_website' : '',
+  assetPrefix: process.env.NODE_ENV === 'production' ? '/fereshteh_website' : '',
   reactStrictMode: true,
   typescript: {
     ignoreBuildErrors: true,
