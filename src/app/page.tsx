@@ -11,14 +11,14 @@ export default function Home() {
   return (
     <main className="space-y-20">
       <HeroSection availableForWork={env.AVAILABLE_FOR_WORK} />
-      <section id="portfolio" className="container scroll-mt-20 max-w-6xl">
+      <section id="portfolio" className="container scroll-mt-24 max-w-6xl">
         <h2 className="mb-10 font-semibold text-2xl md:text-3xl">Portfolio</h2>
         <PortfolioSection items={portfolioItems} />
       </section>
-      <div id="experience" className="scroll-mt-20">
+      <div id="experience" className="scroll-mt-24">
         <ExperienceSection />
       </div>
-      <div id="about" className="scroll-mt-20">
+      <div id="about" className="scroll-mt-24">
         <AboutSection />
       </div>
     </main>

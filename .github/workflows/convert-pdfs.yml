@@ -1,0 +1,38 @@
+name: Convert PDFs to AVIF
+
+on:
+  push:
+    paths:
+      - 'public/portfolio/*.pdf'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Create output directory
+        run: mkdir -p public/portfolio-images
+
+      - name: Convert PDFs to WebP
+        run: bun scripts/pdf-to-avif.ts
+
+      - name: Commit generated images
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add public/portfolio-images/
+          git diff --quiet && git diff --staged --quiet || git commit -m "Auto-generate WebP images from PDFs [skip ci]"
+          git push

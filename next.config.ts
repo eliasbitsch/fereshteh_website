@@ -6,25 +6,20 @@ import type { NextConfig } from "next";
 const withMDX = createMDX();
 
 const config: NextConfig = {
+  output: 'export',
   reactStrictMode: true,
   typescript: {
     ignoreBuildErrors: true,
   },
   devIndicators: false,
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         hostname: "github.com",
       },
     ],
   },
-  redirects: async () => [
-    {
-      source: "/github",
-      destination: "https://github.com/fellipeutaka/website",
-      permanent: false,
-    },
-  ],
   webpack: (config, { isServer }) => {
     // Only alias canvas on the server side to avoid conflicts with browser Canvas API
     if (isServer) {

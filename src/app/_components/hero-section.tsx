@@ -45,7 +45,7 @@ export function HeroSection({ availableForWork }: HeroSectionProps) {
         <div className="flex animate-delay-400 animate-fade-up items-center justify-center gap-5">
           <LinkButton
             className="group rounded-full"
-            href="/documents/resume.pdf"
+            href="/documents/cv_Fereshteh_Hosseini.pdf"
             rel="noopener noreferrer"
             target="_blank"
           >

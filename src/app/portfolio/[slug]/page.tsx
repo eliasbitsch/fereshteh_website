@@ -2,6 +2,10 @@ import { notFound } from "next/navigation";
 import { getPortfolioItems } from "~/lib/portfolio";
 import { PortfolioViewer } from "./portfolio-viewer";
 
+export const metadata = {
+  title: "Portfolio",
+};
+
 export async function generateStaticParams() {
   const items = getPortfolioItems();
 

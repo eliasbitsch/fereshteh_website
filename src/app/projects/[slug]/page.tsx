@@ -12,7 +12,9 @@ import { projectsSource } from "~/lib/source";
 import { PreviewRecursiveButton } from "../_components/preview-recursive-button";
 
 export function generateStaticParams() {
-  return projectsSource.generateParams().map(({ slug }) => slug);
+  return projectsSource.generateParams().map((params) => ({
+    slug: Array.isArray(params.slug) ? params.slug[0] : params.slug,
+  }));
 }
 
 export async function generateMetadata({

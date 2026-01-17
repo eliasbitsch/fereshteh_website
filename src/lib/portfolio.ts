@@ -5,6 +5,7 @@ export interface PortfolioItem {
   title: string;
   pdfPath: string;
   thumbnailPath: string;
+  imagePath: string;
 }
 
 export function getPortfolioItems(): PortfolioItem[] {
@@ -50,10 +51,25 @@ export function getPortfolioItems(): PortfolioItem[] {
       }
     }
 
+    // Try to find full-size WebP image
+    const portfolioImagesDir = path.join(process.cwd(), "public", "portfolio-images");
+    let imagePath = thumbnailPath; // Fallback to thumbnail
+
+    if (fs.existsSync(portfolioImagesDir)) {
+      const lowercaseBase = baseName.toLowerCase();
+      const webpFile = `${lowercaseBase}.webp`;
+      const webpFullPath = path.join(portfolioImagesDir, webpFile);
+
+      if (fs.existsSync(webpFullPath)) {
+        imagePath = `/portfolio-images/${webpFile}`;
+      }
+    }
+
     return {
       title,
       pdfPath: `/portfolio/${pdfFile}`,
       thumbnailPath,
+      imagePath,
     };
   });
 

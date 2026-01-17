@@ -40,6 +40,7 @@
         "cva": "1.0.0-beta.4",
         "fumadocs-mdx": "^14.2.4",
         "lefthook": "^2.0.12",
+        "pdf-to-img": "^5.0.0",
         "postcss": "^8.5.6",
         "sharp": "^0.34.5",
         "tailwind-merge": "^3.4.0",
@@ -1394,6 +1395,8 @@
     "path-scurry": ["path-scurry@2.0.1", "", { "dependencies": { "lru-cache": "^11.0.0", "minipass": "^7.1.2" } }, "sha512-oWyT4gICAu+kaA7QWk/jvCHWarMKNs6pXOGWKDTr7cw4IGcUbW+PeTfbaQiLGheFRpjo6O9J0PmyMfQPjH71oA=="],
 
     "pathe": ["pathe@2.0.3", "", {}, "sha512-WUjGcAqP1gQacoQe+OBJsFA7Ld4DyXuUIjZ5cc75cLHvJ7dtNsTugphxIADwspS+AraAUePCKrSVtPLFj/F88w=="],
+
+    "pdf-to-img": ["pdf-to-img@5.0.0", "", { "dependencies": { "pdfjs-dist": "~5.4.0" }, "bin": { "pdf2img": "bin/cli.mjs" } }, "sha512-QJy7P2Qbk86lntPPIC3HVZAyw/CvM+CP592UbO7grborOJ74Icspb8A2sdHO33MDb/WHwHZpSJxd771rQTlZKA=="],
 
     "pdfjs-dist": ["pdfjs-dist@5.4.530", "", { "optionalDependencies": { "@napi-rs/canvas": "^0.1.84" } }, "sha512-r1hWsSIGGmyYUAHR26zSXkxYWLXLMd6AwqcaFYG9YUZ0GBf5GvcjJSeo512tabM4GYFhxhl5pMCmPr7Q72Rq2Q=="],
 
