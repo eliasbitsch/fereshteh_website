@@ -7,6 +7,7 @@
     "postinstall": "fumadocs-mdx",
     "dev": "bun --bun run next dev --turbo",
     "build": "next build",
+    "build:static": "STATIC_EXPORT=true next build",
     "start": "next start",
     "preview": "next build && next start",
     "format": "biome format --write",
@@ -15,7 +16,9 @@
     "lint:doctor": "ultracite doctor",
     "type-check": "fumadocs-mdx && next typegen && tsc --noEmit",
     "cv:generate": "docker compose up",
-    "cv:recreate": "docker compose up --remove-orphans --build --force-recreate"
+    "cv:recreate": "docker compose up --remove-orphans --build --force-recreate",
+    "convert:portfolio": "bun run scripts/pdf-to-avif.ts",
+    "convert:projects": "bun run scripts/projects-pdf-to-avif.ts"
   },
   "dependencies": {
     "@better-fetch/fetch": "^1.1.21",

@@ -41,3 +41,6 @@ next-env.d.ts
 
 # mdx files (fumadocs)
 .source
+
+# CMS sessions (sensitive, don't commit)
+src/content/data/sessions.json

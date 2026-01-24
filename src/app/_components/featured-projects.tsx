@@ -41,6 +41,9 @@ export function FeaturedProjectsSection() {
             </div>
             <BentoGrid.Body className="flex flex-col justify-end">
               <BentoGrid.Title>{project.data.name}</BentoGrid.Title>
+              {project.data.subtitle && (
+                <div className="text-sm text-neutral-500">{project.data.subtitle}</div>
+              )}
               <BentoGrid.Description>
                 {project.data.description}
               </BentoGrid.Description>

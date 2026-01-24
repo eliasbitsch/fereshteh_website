@@ -2,27 +2,45 @@ import * as m from "motion/react-m";
 import { Badge } from "~/components/ui/badge";
 import { Card } from "~/components/ui/card";
 import { TracingBeam } from "~/components/ui/tracing-beam";
-import { experiences } from "~/config/experiences";
 import { cn } from "~/lib/cva";
 import { formatRange } from "~/utils/date";
 
-export function ExperienceSection() {
+interface Experience {
+  id: string;
+  title: string;
+  company: string;
+  startedAt: Date;
+  endedAt: Date | null;
+  description: string;
+  skills: string[];
+}
+
+interface ExperienceSectionProps {
+  experiences: Experience[];
+  title?: string;
+}
+
+export function ExperienceSection({ experiences, title = "Experience" }: ExperienceSectionProps) {
   return (
     <section
       className="container max-w-6xl animate-delay-700 animate-fade-up scroll-m-32"
       id="experience"
     >
-      <h2 className="mb-10 font-semibold text-2xl md:text-3xl">Experience</h2>
+      <h2 className="mb-10 font-semibold text-2xl md:text-3xl">{title}</h2>
 
       <TracingBeam className="hidden px-6 md:flex md:flex-col" offset={["start start", "end end"]}>
-        <ExperienceList />
+        <ExperienceList experiences={experiences} />
       </TracingBeam>
-      <ExperienceList className="md:hidden" />
+      <ExperienceList experiences={experiences} className="md:hidden" />
     </section>
   );
 }
 
-function ExperienceList(props: React.ComponentProps<"div">) {
+interface ExperienceListProps extends React.ComponentProps<"div"> {
+  experiences: Experience[];
+}
+
+function ExperienceList({ experiences, ...props }: ExperienceListProps) {
   return (
     <div {...props} className={cn("flex flex-col gap-4", props.className)}>
       {experiences.map((experience) => (

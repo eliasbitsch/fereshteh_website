@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getPortfolioItems } from "~/lib/portfolio";
+import { getProjectPdfItems } from "~/lib/projects-pdf";
 import { PortfolioViewer } from "./portfolio-viewer";
 
 export const metadata = {
@@ -7,7 +7,7 @@ export const metadata = {
 };
 
 export async function generateStaticParams() {
-  const items = getPortfolioItems();
+  const items = getProjectPdfItems();
 
   return items.map((item) => ({
     slug: encodeURIComponent(item.title),
@@ -22,7 +22,7 @@ interface PortfolioPageProps {
 
 export default async function PortfolioPage({ params }: PortfolioPageProps) {
   const { slug } = await params;
-  const items = getPortfolioItems();
+  const items = getProjectPdfItems();
   const decodedSlug = decodeURIComponent(slug);
 
   const item = items.find((i) => i.title === decodedSlug);

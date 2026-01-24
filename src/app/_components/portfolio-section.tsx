@@ -10,6 +10,7 @@ const PortfolioList = dynamic(() => import("./portfolio-list-client"), {
 
 interface PortfolioItem {
   title: string;
+  subtitle?: string | null;
   pdfPath: string;
   thumbnailPath: string;
 }

@@ -172,6 +172,11 @@ export function ProjectList({ projects }: ProjectListProps) {
               >
                 <Card.Header>
                   <Card.Title>{project.data.name}</Card.Title>
+                  {project.data.subtitle && (
+                    <Card.Description className="mt-1">
+                      {project.data.subtitle}
+                    </Card.Description>
+                  )}
                 </Card.Header>
                 <Card.Content className="flex-1">
                   <p>{project.data.description}</p>
@@ -275,23 +280,19 @@ export function ProjectListSkeleton() {
       </div>
 
       <div className="grid w-full gap-4 md:grid-cols-2">
-        {Array.from({ length: 6 }).map((_, index) => (
+        {Array.from({ length: 4 }).map((_, index) => (
           <Card.Root
             // biome-ignore lint/suspicious/noArrayIndexKey: This is a skeleton loader
             key={index}
           >
-            <Card.Header>
-              <Skeleton className="h-6 w-64" />
+            <Card.Header className="pb-2">
+              <Skeleton className="h-5 w-48" />
             </Card.Header>
-            <Card.Content className="space-y-2">
-              <Skeleton className="h-6 w-full" />
-              <Skeleton className="h-6 w-1/2" />
+            <Card.Content className="py-2">
+              <Skeleton className="h-4 w-full" />
             </Card.Content>
-            <Card.Footer className="justify-between">
-              <Skeleton className="h-9 w-24 rounded-full" />
-              <div className="flex items-center gap-4">
-                <Skeleton className="h-9 w-32 rounded-full" />
-              </div>
+            <Card.Footer className="pt-2">
+              <Skeleton className="h-8 w-20 rounded-full" />
             </Card.Footer>
           </Card.Root>
         ))}

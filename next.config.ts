@@ -5,10 +5,15 @@ import type { NextConfig } from "next";
 
 const withMDX = createMDX();
 
+// Use STATIC_EXPORT=true for GitHub Pages deployment
+// Use default (no env var) for self-hosted Node.js with CMS
+const isStaticExport = process.env.STATIC_EXPORT === "true";
+
 const config: NextConfig = {
-  output: 'export',
-  basePath: process.env.NODE_ENV === 'production' ? '/fereshteh_website' : '',
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/fereshteh_website' : '',
+  // Only use static export for GitHub Pages
+  ...(isStaticExport ? { output: "export" } : {}),
+  basePath: isStaticExport ? "/fereshteh_website" : "",
+  assetPrefix: isStaticExport ? "/fereshteh_website" : "",
   reactStrictMode: true,
   typescript: {
     ignoreBuildErrors: true,

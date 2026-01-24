@@ -7,7 +7,7 @@ export const ButtonStyles = cva({
   base: [
     "inline-flex select-none items-center justify-center whitespace-nowrap rounded-md font-medium text-sm outline-hidden ring-offset-2 ring-offset-bg transition",
     "focus-visible:ring-1",
-    "disabled:cursor-not-allowed disabled:opacity-50",
+    "disabled:cursor-default disabled:opacity-50",
     "pressed:scale-95",
   ],
 

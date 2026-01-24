@@ -48,6 +48,9 @@ export default async function Page({ params }: PageProps<"/projects/[slug]">) {
       <h1 className="mt-16 mb-4 text-balance text-center font-bold text-4xl md:text-5xl md:leading-16">
         {project.data.name}
       </h1>
+      {project.data.subtitle && (
+        <p className="text-center text-muted-fg mb-8">{project.data.subtitle}</p>
+      )}
       <div className="mb-16 flex items-center justify-center gap-4">
         {project.data.previewUrl &&
           (project.data.previewUrl === siteConfig.url ? (

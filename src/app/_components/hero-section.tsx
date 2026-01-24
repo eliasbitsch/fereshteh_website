@@ -8,10 +8,13 @@ import { withBasePath } from "~/lib/get-base-path";
 import { ScrollIndicator } from "./scroll-indicator";
 
 interface HeroSectionProps {
+  name: string;
+  bio: string;
   availableForWork?: boolean;
+  showResumeButton?: boolean;
 }
 
-export function HeroSection({ availableForWork }: HeroSectionProps) {
+export function HeroSection({ name, bio, availableForWork, showResumeButton = true }: HeroSectionProps) {
   return (
     <section id="home" className="relative flex items-center justify-center overflow-hidden rounded-md py-20 pb-32 md:py-20 md:pb-50 scroll-mt-20">
       <GridPattern />
@@ -21,39 +24,45 @@ export function HeroSection({ availableForWork }: HeroSectionProps) {
         <div className="grid justify-items-center gap-4">
           <div className="size-[250px] animate-delay-100 animate-fade-up">
             <Image
-              src={withBasePath("/fereshteh_portrait.avif")}
-              alt="Fereshteh Portrait"
+              src={withBasePath("/profile-picture/fereshteh_portrait.avif")}
+              alt="Portrait"
               width={250}
               height={250}
               className="rounded-full"
             />
           </div>
         </div>
-        {!!availableForWork && (
+        {availableForWork ? (
           <div className="flex justify-center mt-20">
             <BadgeAnimated className="flex items-center gap-2 text-sm animate-delay-300 animate-fade-up">
               <Icons.Circle className="size-2 animate-pulse fill-success text-success" />
               Available for work
             </BadgeAnimated>
           </div>
+        ) : (
+          <div className="h-6 mt-20" />
         )}
         <h1 className="animate-delay-300 animate-fade-up text-center font-bold text-5xl md:text-7xl">
-          Fereshteh Hosseini
+          {name}
         </h1>
         <p className="mx-auto max-w-lg animate-delay-300 animate-fade-up text-balance text-center text-muted-fg">
-          I hold a Master's degree in Human–Computer Interaction and have professional experience working at AIT Company. My work focuses on creating intuitive, user-centered digital experiences that bridge the gap between people and technology.
+          {bio}
         </p>
-        <div className="flex animate-delay-400 animate-fade-up items-center justify-center gap-5">
-          <LinkButton
-            className="group rounded-full"
-            href={withBasePath("/documents/cv_Fereshteh_Hosseini.pdf")}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            <Icons.Download className="mr-2 size-4" />
-            Get resume
-          </LinkButton>
-        </div>
+        {showResumeButton ? (
+          <div className="flex animate-delay-400 animate-fade-up items-center justify-center gap-5">
+            <LinkButton
+              className="group rounded-full"
+              href={withBasePath("/documents/cv_Fereshteh_Hosseini.pdf")}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <Icons.Download className="mr-2 size-4" />
+              Get resume
+            </LinkButton>
+          </div>
+        ) : (
+          <div className="h-10" />
+        )}
       </div>
 
       <ScrollIndicator />

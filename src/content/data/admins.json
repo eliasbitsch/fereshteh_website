@@ -1,0 +1,18 @@
+{
+  "admins": [
+    {
+      "email": "fereshteh.hosseini.at@gmail.com",
+      "passwordHash": "",
+      "resetToken": null,
+      "resetTokenExpiry": null,
+      "createdAt": "2025-01-01T00:00:00.000Z"
+    },
+    {
+      "email": "eliasbitsch@hotmail.com",
+      "passwordHash": "ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f",
+      "resetToken": "98b0680b5a80faad7187ac61e455d2ae6b2ef1582ff8aad4aa8b44aabdfd1b57",
+      "resetTokenExpiry": "2026-01-21T16:51:30.892Z",
+      "createdAt": "2025-01-01T00:00:00.000Z"
+    }
+  ]
+}

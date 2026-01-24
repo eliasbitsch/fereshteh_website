@@ -1,9 +1,8 @@
 import "~/styles/globals.css";
 
 import type { Metadata, Viewport } from "next";
+import { LayoutWrapper } from "~/components/layout-wrapper";
 import { Providers } from "~/components/providers";
-import { SiteFooter } from "~/components/site-footer";
-import { SiteHeader } from "~/components/site-header";
 import { fonts } from "~/config/fonts";
 import { siteConfig } from "~/config/site";
 import { cx } from "~/lib/cva";
@@ -53,9 +52,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </noscript>
 
         <Providers>
-          <SiteHeader />
-          {children}
-          <SiteFooter />
+          <LayoutWrapper>{children}</LayoutWrapper>
         </Providers>
       </body>
     </html>

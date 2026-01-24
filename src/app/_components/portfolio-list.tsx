@@ -30,12 +30,12 @@ export function PortfolioList({ items }: PortfolioListProps) {
 export function PortfolioListSkeleton() {
   return (
     <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
-      {Array.from({ length: 6 }).map((_, i) => (
+      {Array.from({ length: 4 }).map((_, i) => (
         <div
           className="flex flex-col overflow-hidden rounded-xl border bg-card"
           key={i}
         >
-          <div className="aspect-[3/4] w-full animate-pulse bg-muted" />
+          <div className="aspect-[16/9] w-full animate-pulse bg-muted" />
           <div className="p-4">
             <div className="h-5 w-3/4 animate-pulse rounded bg-muted" />
           </div>

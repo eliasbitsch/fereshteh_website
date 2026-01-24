@@ -951,6 +951,25 @@ export const Icons = {
       </g>
     </svg>
   ),
+  EyeOff: (props) => (
+    <svg
+      height={32}
+      viewBox="0 0 24 24"
+      width={32}
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      {...props}
+    >
+      <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
+      <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
+      <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" />
+      <line x1={2} x2={22} y1={2} y2={22} />
+    </svg>
+  ),
   Download: (props) => (
     <svg
       fill="none"
@@ -1642,6 +1661,233 @@ export const Icons = {
     >
       <rect width="20" height="16" x="2" y="4" rx="2" />
       <path d="m22 7-8.97 5.7a1.94 1.94 0 01-2.06 0L2 7" />
+    </svg>
+  ),
+  Bold: (props) => (
+    <svg
+      fill="none"
+      height={24}
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      viewBox="0 0 24 24"
+      width={24}
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path d="M6 4h8a4 4 0 014 4 4 4 0 01-4 4H6z" />
+      <path d="M6 12h9a4 4 0 014 4 4 4 0 01-4 4H6z" />
+    </svg>
+  ),
+  Italic: (props) => (
+    <svg
+      fill="none"
+      height={24}
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      viewBox="0 0 24 24"
+      width={24}
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <line x1="19" x2="10" y1="4" y2="4" />
+      <line x1="14" x2="5" y1="20" y2="20" />
+      <line x1="15" x2="9" y1="4" y2="20" />
+    </svg>
+  ),
+  Underline: (props) => (
+    <svg
+      fill="none"
+      height={24}
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      viewBox="0 0 24 24"
+      width={24}
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path d="M6 4v6a6 6 0 0012 0V4" />
+      <line x1="4" x2="20" y1="20" y2="20" />
+    </svg>
+  ),
+  List: (props) => (
+    <svg
+      fill="none"
+      height={24}
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      viewBox="0 0 24 24"
+      width={24}
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <line x1="8" x2="21" y1="6" y2="6" />
+      <line x1="8" x2="21" y1="12" y2="12" />
+      <line x1="8" x2="21" y1="18" y2="18" />
+      <line x1="3" x2="3.01" y1="6" y2="6" />
+      <line x1="3" x2="3.01" y1="12" y2="12" />
+      <line x1="3" x2="3.01" y1="18" y2="18" />
+    </svg>
+  ),
+  ListOrdered: (props) => (
+    <svg
+      fill="none"
+      height={24}
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      viewBox="0 0 24 24"
+      width={24}
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <line x1="10" x2="21" y1="6" y2="6" />
+      <line x1="10" x2="21" y1="12" y2="12" />
+      <line x1="10" x2="21" y1="18" y2="18" />
+      <path d="M4 6h1v4" />
+      <path d="M4 10h2" />
+      <path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1" />
+    </svg>
+  ),
+  Unlink: (props) => (
+    <svg
+      fill="none"
+      height={24}
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      viewBox="0 0 24 24"
+      width={24}
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path d="M18.84 12.25l1.72-1.71h-.02a5.004 5.004 0 00-.12-7.07 5.006 5.006 0 00-6.95 0l-1.72 1.71" />
+      <path d="M5.17 11.75l-1.71 1.71a5.004 5.004 0 00.12 7.07 5.006 5.006 0 006.95 0l1.71-1.71" />
+      <line x1="8" x2="8" y1="2" y2="5" />
+      <line x1="2" x2="5" y1="8" y2="8" />
+      <line x1="16" x2="16" y1="19" y2="22" />
+      <line x1="19" x2="22" y1="16" y2="16" />
+    </svg>
+  ),
+  RemoveFormatting: (props) => (
+    <svg
+      fill="none"
+      height={24}
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      viewBox="0 0 24 24"
+      width={24}
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path d="M4 7V4h16v3" />
+      <path d="M10 4v6" />
+      <path d="M12 19l-3 1" />
+      <path d="M4 20l8-4" />
+      <path d="M20 4l-16 16" />
+    </svg>
+  ),
+  Edit: (props) => (
+    <svg
+      fill="none"
+      height={24}
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      viewBox="0 0 24 24"
+      width={24}
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+      <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+    </svg>
+  ),
+  Save: (props) => (
+    <svg
+      fill="none"
+      height={24}
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      viewBox="0 0 24 24"
+      width={24}
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
+      <polyline points="17 21 17 13 7 13 7 21" />
+      <polyline points="7 3 7 8 15 8" />
+    </svg>
+  ),
+  Upload: (props) => (
+    <svg
+      fill="none"
+      height={24}
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      viewBox="0 0 24 24"
+      width={24}
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+      <polyline points="17 8 12 3 7 8" />
+      <line x1="12" x2="12" y1="3" y2="15" />
+    </svg>
+  ),
+  GripVertical: (props) => (
+    <svg
+      fill="none"
+      height={24}
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      viewBox="0 0 24 24"
+      width={24}
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <circle cx="9" cy="12" r="1" />
+      <circle cx="9" cy="5" r="1" />
+      <circle cx="9" cy="19" r="1" />
+      <circle cx="15" cy="12" r="1" />
+      <circle cx="15" cy="5" r="1" />
+      <circle cx="15" cy="19" r="1" />
+    </svg>
+  ),
+  Image: (props) => (
+    <svg
+      fill="none"
+      height={24}
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      viewBox="0 0 24 24"
+      width={24}
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <rect height="18" rx="2" ry="2" width="18" x="3" y="3" />
+      <circle cx="9" cy="9" r="2" />
+      <path d="M21 15l-3.086-3.086a2 2 0 00-2.828 0L6 21" />
     </svg>
   ),
 } satisfies Record<string, IconComponent>;

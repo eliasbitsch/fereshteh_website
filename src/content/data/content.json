@@ -1,0 +1,169 @@
+{
+  "hero": {
+    "name": "Fereshteh Hossein",
+    "bio": "I hold a Master's degree in Human–Computer Interaction and have professional experience working at AIT Company. My work focuses on creating intuitive, user-centered digital experiences that bridge the gap between people and technology.",
+    "availableForWork": true,
+    "showResumeButton": false
+  },
+  "sections": {
+    "portfolioTitle": "Projects",
+    "experienceTitle": "Experience"
+  },
+  "about": {
+    "title": "About me",
+    "description": "Welcome to my UI/UX design portfolio! I'm passionate about creating intuitive and visually stunning experiences for users. With a keen eye for detail and a deep understanding of user behavior, I strive to craft designs that not only look beautiful but also function seamlessly. My portfolio showcases a collection of projects where I have combined creativity and user-centered design principles to deliver exceptional results. Each project is a story of problem-solving, creativity, and innovation. Feel free to explore and get in touch to discuss how we can collaborate on your next design venture."
+  },
+  "site": {
+    "name": "Fereshteh Hosseini",
+    "description": "Fereshteh Hosseini's personal website",
+    "email": "fereshteh.hosseini.at@gmail.com",
+    "linkedIn": "https://www.linkedin.com/in/fereshteh-hosseini/"
+  },
+  "location": {
+    "city": "Vienna",
+    "country": "Austria"
+  },
+  "experiences": [
+    {
+      "id": "exp-1",
+      "title": "User Experience Designer",
+      "company": "Austrian Institute of Technology (AIT)",
+      "startedAt": "2025-06-01",
+      "endedAt": "2026-01-01",
+      "description": "Designed and improved HMIs in mobility sector projects with a user-centered approach. Enhanced sustainable mobility in the on-demand shuttle service (RIAMO project) by applying persuasive interface design strategies to encourage user engagement and adoption of eco-friendly transportation. Contributed to user research and interface design in the Tele operator crane system by conducting contextual inquiries and workshops to capture operator requirements, and translating insights into wireframes and prototypes to support the digitalization of crane operations.",
+      "skills": [
+        "User Research",
+        "Interface Design",
+        "Wireframing",
+        "Prototyping",
+        "Contextual Inquiry",
+        "Persuasive Design",
+        "HMI Design",
+        "User-Centered Design"
+      ]
+    },
+    {
+      "id": "exp-2",
+      "title": "Product Design Intern",
+      "company": "TOSAN TECHNO and Productplan companies",
+      "startedAt": "2022-12-01",
+      "endedAt": "2023-05-01",
+      "description": "Redesigned user experience for ATM and cash register systems by conducting field studies, observations, and user interviews to identify pain points; performed qualitative analysis, led group brainstorming sessions, and created wireframes and Figma prototypes to improve navigation and workflow efficiency. Gained hands-on experience in product design principles under the mentorship of a 30-member expert team, with exposure to UX Writing, Service Design, Business Model Canvas, Agile methodologies, and analytics tools including Google Analytics and Google Tag Manager.",
+      "skills": [
+        "User Research",
+        "Field Studies",
+        "Qualitative Analysis",
+        "Wireframing",
+        "Figma",
+        "Prototyping",
+        "UX Writing",
+        "Service Design",
+        "Business Model Canvas",
+        "Agile",
+        "Google Analytics",
+        "Google Tag Manager"
+      ]
+    },
+    {
+      "id": "exp-3",
+      "title": "Visual Design Specialist",
+      "company": "Pars Higher Education Institute of Art and Education",
+      "startedAt": "2021-09-01",
+      "endedAt": "2023-08-01",
+      "description": "Utilized advanced proficiency in Adobe Photoshop to create visually engaging graphics and layouts for digital interfaces, maintaining brand consistency and elevating user experience. Collaborated closely with cross-functional teams to conceptualize and execute design solutions, harnessing Photoshop's tools and features to optimize visual elements for web and mobile platforms.",
+      "skills": [
+        "Adobe Photoshop",
+        "Visual Design",
+        "Brand Consistency",
+        "Web Design",
+        "Mobile Design",
+        "Cross-functional Collaboration"
+      ]
+    },
+    {
+      "id": "exp-4",
+      "title": "Software Engineer",
+      "company": "Shatel, Mobile Network Operator Company",
+      "startedAt": "2015-05-01",
+      "endedAt": "2015-09-01",
+      "description": "Initiated the development of a Log Management project using MongoDB, enhancing data storage and retrieval processes.",
+      "skills": [
+        "MongoDB",
+        "Log Management",
+        "Software Development"
+      ]
+    }
+  ],
+  "skills": [
+    {
+      "name": "Figma",
+      "icon": "Figma",
+      "url": "https://www.figma.com"
+    },
+    {
+      "name": "Adobe XD",
+      "icon": "AdobeXD",
+      "url": "https://www.adobe.com/products/xd.html"
+    },
+    {
+      "name": "Photoshop",
+      "icon": "Photoshop",
+      "url": "https://www.adobe.com/products/photoshop.html"
+    },
+    {
+      "name": "Penpot",
+      "icon": "Penpot",
+      "url": "https://penpot.app"
+    },
+    {
+      "name": "Balsamiq",
+      "icon": "Balsamiq",
+      "url": "https://balsamiq.com"
+    },
+    {
+      "name": "Unity",
+      "icon": "Unity",
+      "url": "https://unity.com"
+    },
+    {
+      "name": "Arduino",
+      "icon": "Arduino",
+      "url": "https://www.arduino.cc"
+    },
+    {
+      "name": "R Studio",
+      "icon": "RStudio",
+      "url": "https://www.rstudio.com"
+    },
+    {
+      "name": "SPSS",
+      "icon": "SPSS",
+      "url": "https://www.ibm.com/products/spss-statistics"
+    },
+    {
+      "name": "HTML",
+      "icon": "HTML",
+      "url": "https://html.spec.whatwg.org"
+    },
+    {
+      "name": "CSS",
+      "icon": "CSS",
+      "url": "https://www.w3.org/Style/CSS"
+    },
+    {
+      "name": "JavaScript",
+      "icon": "JavaScript",
+      "url": "https://www.javascript.com"
+    },
+    {
+      "name": "React.js",
+      "icon": "React",
+      "url": "https://reactjs.org"
+    },
+    {
+      "name": "Shadcn UI Library",
+      "icon": "ShadcnUI",
+      "url": "https://ui.shadcn.com"
+    }
+  ]
+}

@@ -1,16 +1,24 @@
 import * as m from "motion/react-m";
+import type { SkillContent } from "~/lib/content";
 import { Connect } from "./connect";
 import { LocationCard } from "./location-card";
 import { StacksCard } from "./stacks-card";
 
-export function AboutSection() {
+interface AboutSectionProps {
+  title: string;
+  description: string;
+  location?: { city: string; country: string };
+  skills?: SkillContent[];
+}
+
+export function AboutSection({ title, description, location, skills }: AboutSectionProps) {
   return (
     <section className="container max-w-6xl">
-      <h2 className="mb-10 font-semibold text-2xl md:text-3xl">About me</h2>
+      <h2 className="mb-10 font-semibold text-2xl md:text-3xl">{title}</h2>
 
       <div className="mb-8 max-w-3xl">
         <p className="text-muted-fg leading-relaxed">
-        Welcome to my UI/UX design portfolio! I'm passionate about creating intuitive and visually stunning experiences for users. With a keen eye for detail and a deep understanding of user behavior, I strive to craft designs that not only look beautiful but also function seamlessly. My portfolio showcases a collection of projects where I have combined creativity and user-centered design principles to deliver exceptional results. Each project is a story of problem-solving, creativity, and innovation. Feel free to explore and get in touch to discuss how we can collaborate on your next design venture.
+          {description}
         </p>
       </div>
 
@@ -30,10 +38,10 @@ export function AboutSection() {
       >
         <div className="grid gap-4">
           <Connect />
-          <StacksCard />
+          <StacksCard skills={skills} />
         </div>
         <div className="grid gap-4">
-          <LocationCard />
+          <LocationCard city={location?.city} country={location?.country} />
         </div>
       </m.div>
     </section>

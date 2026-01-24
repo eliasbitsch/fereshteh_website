@@ -4,6 +4,7 @@ import { PortfolioCard } from "./portfolio-card";
 
 interface PortfolioItem {
   title: string;
+  subtitle?: string | null;
   pdfPath: string;
   thumbnailPath: string;
 }
@@ -23,6 +24,7 @@ export default function PortfolioListClient({
           slug={item.title}
           thumbnailPath={item.thumbnailPath}
           title={item.title}
+          subtitle={item.subtitle}
         />
       ))}
     </div>

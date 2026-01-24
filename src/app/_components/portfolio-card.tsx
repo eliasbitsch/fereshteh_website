@@ -5,12 +5,14 @@ import Link from "next/link";
 
 interface PortfolioCardProps {
   title: string;
+  subtitle?: string | null;
   thumbnailPath: string;
   slug: string;
 }
 
 export function PortfolioCard({
   title,
+  subtitle,
   thumbnailPath,
   slug,
 }: PortfolioCardProps) {
@@ -30,6 +32,7 @@ export function PortfolioCard({
       </div>
       <div className="p-4">
         <h3 className="font-medium text-sm md:text-base">{title}</h3>
+        {subtitle && <p className="text-xs text-muted-fg mt-1">{subtitle}</p>}
       </div>
     </Link>
   );
