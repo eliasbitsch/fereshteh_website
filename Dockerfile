@@ -21,8 +21,9 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+# Alpine uses different commands for adding users/groups
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S -u 1001 -G nodejs nextjs
 
 # Copy public assets
 COPY --from=builder /app/public ./public
