@@ -6,6 +6,11 @@ export const metadata = {
   title: "Portfolio",
 };
 
+// Revalidate every 60 seconds for CMS updates
+export const revalidate = 60;
+// Generate pages dynamically on first request
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
   const items = getProjectPdfItems();
 

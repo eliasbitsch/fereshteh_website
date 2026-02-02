@@ -1,0 +1,18 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      # Persist CMS content changes
+      - ./src/content/data:/app/src/content/data
+      # Persist uploaded files
+      - ./public/projects:/app/public/projects
+      - ./public/projects-jpg:/app/public/projects-jpg
+      - ./public/projects-thumbnails:/app/public/projects-thumbnails
+      - ./public/profile-picture:/app/public/profile-picture
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped

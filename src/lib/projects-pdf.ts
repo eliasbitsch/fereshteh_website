@@ -12,6 +12,49 @@ export interface ProjectPdfItem {
   thumbnailPath: string;
 }
 
+/**
+ * Normalize a project title/name for consistent file lookups
+ * Converts to lowercase and replaces spaces/special chars with hyphens
+ */
+export function normalizeProjectFilename(name: string): string {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-") // Replace spaces with hyphens
+    .replace(/[^\w-]/g, "-") // Replace special chars with hyphens
+    .replace(/-+/g, "-") // Replace multiple hyphens with single hyphen
+    .replace(/^-|-$/g, ""); // Remove leading/trailing hyphens
+}
+
+/**
+ * Generate all possible filename variations for a project
+ * Returns array of candidate filenames to check
+ */
+function getFilenameVariations(
+  baseName: string,
+  metadataTitle?: string
+): string[] {
+  const variations = new Set<string>();
+
+  // Original basename variations
+  variations.add(baseName);
+  variations.add(normalizeProjectFilename(baseName));
+
+  // Remove trailing numbers (e.g., "project-1" -> "project")
+  const withoutNumbers = normalizeProjectFilename(baseName).replace(/-\d+$/, "");
+  if (withoutNumbers) {
+    variations.add(withoutNumbers);
+  }
+
+  // If metadata title exists and is different, add its variations
+  if (metadataTitle && metadataTitle !== baseName) {
+    variations.add(metadataTitle);
+    variations.add(normalizeProjectFilename(metadataTitle));
+  }
+
+  return Array.from(variations).filter((v) => v.length > 0);
+}
+
 function getProjectsOrder(): string[] {
   const orderFile = path.join(
     process.cwd(),
@@ -62,43 +105,46 @@ export function getProjectPdfItems(): ProjectPdfItem[] {
   const items: ProjectPdfItem[] = pdfFiles.map((pdfFile) => {
     const baseName = path.basename(pdfFile, ".pdf");
     const title = baseName;
-    // Use hyphenated version for image lookups (matches conversion script)
-    const lowercaseBase = baseName.toLowerCase().replace(/\s+/g, "-");
+
+    // Get metadata first
+    const meta = metadata[baseName] || metadata[normalizeProjectFilename(baseName)] || {};
+
+    // Generate all possible filename variations using the utility function
+    const filenameVariations = getFilenameVariations(baseName, meta.title);
 
     // Try to find a matching JPG image (full-size)
     let imagePath = withBasePath("/projects/" + pdfFile); // Fallback to PDF
 
     if (fs.existsSync(projectsJpgDir)) {
-      // Prefer JPG first since that's what we generate
       const imageExtensions = [".jpg", ".jpeg", ".png", ".webp", ".avif"];
 
-      for (const ext of imageExtensions) {
-        const imageFile = `${lowercaseBase}${ext}`;
-        const imageFullPath = path.join(projectsJpgDir, imageFile);
+      outer: for (const variation of filenameVariations) {
+        for (const ext of imageExtensions) {
+          const imageFile = `${variation}${ext}`;
+          const imageFullPath = path.join(projectsJpgDir, imageFile);
 
-        if (fs.existsSync(imageFullPath)) {
-          imagePath = withBasePath(`/projects-jpg/${imageFile}`);
-          break;
+          if (fs.existsSync(imageFullPath)) {
+            imagePath = withBasePath(`/projects-jpg/${imageFile}`);
+            break outer;
+          }
         }
       }
     }
 
-    // Try to find a custom thumbnail, fallback to AVIF image
-    let thumbnailPath = imagePath; // Default to full-size image
-
+    // Try to find a custom thumbnail, fallback to full-size image
+    let thumbnailPath = imagePath;
     const thumbnailExtensions = [".png", ".jpg", ".jpeg", ".webp", ".avif"];
-    // Also check variations: "SPOONS" -> "spoons", "SPEEDSHOT-4" -> "speedshot-4" or "speedshot"
-    const candidates = [baseName, lowercaseBase, lowercaseBase.replace(/-\d+$/, "")];
 
     // First check projects-thumbnails directory (custom uploads)
     if (fs.existsSync(thumbnailsDir)) {
-      outer: for (const candidate of candidates) {
+      outer: for (const variation of filenameVariations) {
         for (const ext of thumbnailExtensions) {
-          const thumbnailFile = `${candidate}${ext}`;
+          const thumbnailFile = `${variation}${ext}`;
           const thumbnailFullPath = path.join(thumbnailsDir, thumbnailFile);
 
           if (fs.existsSync(thumbnailFullPath)) {
             thumbnailPath = withBasePath(`/projects-thumbnails/${thumbnailFile}`);
+            console.log(`[Projects PDF] Found custom thumbnail: ${thumbnailFile} for project "${baseName}"`);
             break outer;
           }
         }
@@ -109,21 +155,20 @@ export function getProjectPdfItems(): ProjectPdfItem[] {
     if (thumbnailPath === imagePath) {
       const legacyThumbnailsDir = path.join(process.cwd(), "public", "thumbnails");
       if (fs.existsSync(legacyThumbnailsDir)) {
-        outer: for (const candidate of candidates) {
+        outer: for (const variation of filenameVariations) {
           for (const ext of thumbnailExtensions) {
-            const thumbnailFile = `${candidate}${ext}`;
+            const thumbnailFile = `${variation}${ext}`;
             const thumbnailFullPath = path.join(legacyThumbnailsDir, thumbnailFile);
 
             if (fs.existsSync(thumbnailFullPath)) {
               thumbnailPath = withBasePath(`/thumbnails/${thumbnailFile}`);
+              console.log(`[Projects PDF] Found legacy thumbnail: ${thumbnailFile} for project "${baseName}"`);
               break outer;
             }
           }
         }
       }
     }
-
-    const meta = metadata[baseName] || metadata[lowercaseBase] || {};
 
     return {
       title: meta.title && meta.title.length > 0 ? meta.title : title,

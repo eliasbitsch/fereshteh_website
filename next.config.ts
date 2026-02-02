@@ -10,8 +10,8 @@ const withMDX = createMDX();
 const isStaticExport = process.env.STATIC_EXPORT === "true";
 
 const config: NextConfig = {
-  // Only use static export for GitHub Pages
-  ...(isStaticExport ? { output: "export" } : {}),
+  // Static export for GitHub Pages, standalone for Docker
+  ...(isStaticExport ? { output: "export" } : { output: "standalone" }),
   basePath: isStaticExport ? "/fereshteh_website" : "",
   assetPrefix: isStaticExport ? "/fereshteh_website" : "",
   reactStrictMode: true,
@@ -20,12 +20,40 @@ const config: NextConfig = {
   },
   devIndicators: false,
   images: {
-    unoptimized: true,
+    // Only unoptimize for static export (GitHub Pages)
+    // Docker deployment will have full optimization
+    unoptimized: isStaticExport,
+    formats: ["image/avif", "image/webp"],
     remotePatterns: [
       {
         hostname: "github.com",
       },
     ],
+  },
+  // Add compression for production
+  compress: true,
+  // Optimize headers for caching
+  async headers() {
+    return [
+      {
+        source: "/:all*(svg|jpg|jpeg|png|gif|webp|avif)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/fonts/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+    ];
   },
   webpack: (config, { isServer }) => {
     // Only alias canvas on the server side to avoid conflicts with browser Canvas API

@@ -10,7 +10,8 @@ import {
   SiCss3,
   SiJavascript,
   SiReact,
-  SiShadcnui
+  SiShadcnui,
+  SiRos
 } from "react-icons/si";
 
 export type IconProps = React.ComponentProps<"svg">;
@@ -1614,6 +1615,7 @@ export const Icons = {
       </text>
     </svg>
   ),
+  Ros: (props) => <SiRos {...props} />,
   Penpot: (props) => (
     <svg
       role="img"

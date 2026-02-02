@@ -1,6 +1,6 @@
 {
   "hero": {
-    "name": "Fereshteh Hossein",
+    "name": "Fereshteh Hosseini",
     "bio": "I hold a Master's degree in Human–Computer Interaction and have professional experience working at AIT Company. My work focuses on creating intuitive, user-centered digital experiences that bridge the gap between people and technology.",
     "availableForWork": true,
     "showResumeButton": false
@@ -96,14 +96,14 @@
   ],
   "skills": [
     {
-      "name": "Figma",
-      "icon": "Figma",
-      "url": "https://www.figma.com"
-    },
-    {
       "name": "Adobe XD",
       "icon": "AdobeXD",
       "url": "https://www.adobe.com/products/xd.html"
+    },
+    {
+      "name": "Figma",
+      "icon": "Figma",
+      "url": "https://www.figma.com"
     },
     {
       "name": "Photoshop",

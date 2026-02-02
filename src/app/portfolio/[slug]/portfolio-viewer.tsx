@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, useEffect } from "react";
 import { Icons } from "~/components/ui/icons";
 import { Button } from "~/components/ui/button";
 
@@ -21,10 +21,12 @@ const MIN_ZOOM = 0.5;
 const MAX_ZOOM = 3;
 const ZOOM_STEP = 0.25;
 const BASE_WIDTH = 896; // max-w-4xl in pixels
+const ZOOM_ANIMATION_MS = 200;
 
 export function PortfolioViewer({ item }: PortfolioViewerProps) {
   const router = useRouter();
   const [zoom, setZoom] = useState(1);
+  const [isAnimatingZoom, setIsAnimatingZoom] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [isAtTop, setIsAtTop] = useState(true);
   const dragStartX = useRef(0);
@@ -32,6 +34,8 @@ export function PortfolioViewer({ item }: PortfolioViewerProps) {
   const scrollStartX = useRef(0);
   const scrollStartY = useRef(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const imageWrapperRef = useRef<HTMLDivElement>(null);
+  const animationRef = useRef<number | null>(null);
 
   const handleClose = () => {
     router.push("/#portfolio");
@@ -46,16 +50,83 @@ export function PortfolioViewer({ item }: PortfolioViewerProps) {
     document.body.removeChild(link);
   };
 
+  // Animated zoom with synchronized scroll
+  const animateZoom = useCallback((oldZoom: number, newZoom: number) => {
+    const container = scrollContainerRef.current;
+    if (!container || oldZoom === newZoom) return;
+
+    // Cancel any ongoing animation
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current);
+    }
+
+    setIsAnimatingZoom(true);
+
+    // Calculate initial scroll center
+    const startScrollLeft = container.scrollLeft;
+    const startScrollTop = container.scrollTop;
+    const scrollCenterX = startScrollLeft + container.clientWidth / 2;
+    const scrollCenterY = startScrollTop + container.clientHeight / 2;
+
+    // Calculate target scroll position
+    const scale = newZoom / oldZoom;
+    const targetScrollLeft = scrollCenterX * scale - container.clientWidth / 2;
+    const targetScrollTop = scrollCenterY * scale - container.clientHeight / 2;
+
+    const startTime = performance.now();
+
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / ZOOM_ANIMATION_MS, 1);
+
+      // Ease out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
+
+      // Interpolate scroll position
+      container.scrollLeft = startScrollLeft + (targetScrollLeft - startScrollLeft) * eased;
+      container.scrollTop = startScrollTop + (targetScrollTop - startScrollTop) * eased;
+
+      if (progress < 1) {
+        animationRef.current = requestAnimationFrame(animate);
+      } else {
+        setIsAnimatingZoom(false);
+        animationRef.current = null;
+      }
+    };
+
+    animationRef.current = requestAnimationFrame(animate);
+  }, []);
+
+  // Cleanup animation on unmount
+  useEffect(() => {
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, []);
+
   const handleZoomIn = () => {
-    setZoom((prev) => Math.min(prev + ZOOM_STEP, MAX_ZOOM));
+    const newZoom = Math.min(zoom + ZOOM_STEP, MAX_ZOOM);
+    if (newZoom !== zoom) {
+      animateZoom(zoom, newZoom);
+      setZoom(newZoom);
+    }
   };
 
   const handleZoomOut = () => {
-    setZoom((prev) => Math.max(prev - ZOOM_STEP, MIN_ZOOM));
+    const newZoom = Math.max(zoom - ZOOM_STEP, MIN_ZOOM);
+    if (newZoom !== zoom) {
+      animateZoom(zoom, newZoom);
+      setZoom(newZoom);
+    }
   };
 
   const handleResetZoom = () => {
-    setZoom(1);
+    if (zoom !== 1) {
+      animateZoom(zoom, 1);
+      setZoom(1);
+    }
   };
 
   const handleJumpToTop = () => {
@@ -100,13 +171,25 @@ export function PortfolioViewer({ item }: PortfolioViewerProps) {
     setIsDragging(false);
   }, []);
 
-  // Ctrl/Cmd + scroll to zoom
+  // Ctrl/Cmd + scroll to zoom (instant for smooth trackpad feel)
   const handleWheel = useCallback(
     (e: React.WheelEvent) => {
       if (e.ctrlKey || e.metaKey) {
         e.preventDefault();
         const delta = e.deltaY > 0 ? -ZOOM_STEP : ZOOM_STEP;
-        setZoom((prev) => Math.min(Math.max(prev + delta, MIN_ZOOM), MAX_ZOOM));
+        setZoom((prev) => {
+          const newZoom = Math.min(Math.max(prev + delta, MIN_ZOOM), MAX_ZOOM);
+          // For wheel zoom, adjust scroll instantly (feels more responsive)
+          const container = scrollContainerRef.current;
+          if (container && prev !== newZoom) {
+            const scrollCenterX = container.scrollLeft + container.clientWidth / 2;
+            const scrollCenterY = container.scrollTop + container.clientHeight / 2;
+            const scale = newZoom / prev;
+            container.scrollLeft = scrollCenterX * scale - container.clientWidth / 2;
+            container.scrollTop = scrollCenterY * scale - container.clientHeight / 2;
+          }
+          return newZoom;
+        });
       }
     },
     []
@@ -201,7 +284,7 @@ export function PortfolioViewer({ item }: PortfolioViewerProps) {
               style={{
                 width: `${imageWidth}px`,
                 maxWidth: "none",
-                transition: isDragging ? "none" : "width 0.2s ease-out",
+                transition: isAnimatingZoom ? `width ${ZOOM_ANIMATION_MS}ms cubic-bezier(0.33, 1, 0.68, 1)` : "none",
               }}
               priority
               draggable={false}

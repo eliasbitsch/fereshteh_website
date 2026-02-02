@@ -7,6 +7,9 @@ import {
   deleteProjectPdf,
 } from "~/lib/projects-pdf";
 
+// Cache for 30 seconds - balances performance with CMS freshness
+export const revalidate = 30;
+
 async function checkAuth(): Promise<boolean> {
   const cookieStore = await cookies();
   const token = cookieStore.get("admin_session")?.value;

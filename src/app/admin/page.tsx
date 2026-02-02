@@ -114,12 +114,6 @@ export default function AdminPage() {
   const [authenticated, setAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState<"hero" | "about" | "experiences" | "projects">("hero");
   const [editingExperience, setEditingExperience] = useState<ExperienceContent | null>(null);
-  const [projectsList, setProjectsList] = useState<
-    { path: string; url: string; name: string; subtitle: string | null }[]
-  >([]);
-  const [editingProject, setEditingProject] = useState<
-    { path: string; name: string; subtitle?: string | null } | null
-  >(null);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   // Project PDFs state
@@ -129,12 +123,21 @@ export default function AdminPage() {
   const [projectPdfsOrder, setProjectPdfsOrder] = useState<string[]>([]);
   const [draggedPdfIndex, setDraggedPdfIndex] = useState<number | null>(null);
   const [isDraggingPdf, setIsDraggingPdf] = useState(false);
+  const [draggedSkillIndex, setDraggedSkillIndex] = useState<number | null>(null);
   const [uploadingPdf, setUploadingPdf] = useState(false);
   const [uploadingProfilePicture, setUploadingProfilePicture] = useState(false);
   const [selectedProfileFile, setSelectedProfileFile] = useState<File | null>(null);
   const [profilePreviewUrl, setProfilePreviewUrl] = useState<string | null>(null);
   const profileInputRef = useRef<HTMLInputElement | null>(null);
+  const [uploadingCv, setUploadingCv] = useState(false);
+  const [selectedCvFile, setSelectedCvFile] = useState<File | null>(null);
+  const cvInputRef = useRef<HTMLInputElement | null>(null);
   const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
+  const [thumbnailPreview, setThumbnailPreview] = useState<{
+    file: File;
+    url: string;
+    title: string;
+  } | null>(null);
   const [editingPdf, setEditingPdf] = useState<{
     key: string;
     title: string;
@@ -180,37 +183,55 @@ export default function AdminPage() {
       const file = input.files?.[0];
       if (!file) return;
 
-      setUploadingThumbnail(true);
-      setMessage(null);
-
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("title", title);
-
-      try {
-        const res = await fetch("/api/content/projects/thumbnail", {
-          method: "POST",
-          body: formData,
-        });
-
-        if (res.ok) {
-          await loadProjectPdfs();
-          setMessage({ type: "success", text: "Thumbnail updated!" });
-          setTimeout(() => setMessage(null), 2000);
-        } else {
-          const error = await res.json();
-          setMessage({ type: "error", text: error.error || "Upload failed" });
-        }
-      } catch {
-        setMessage({ type: "error", text: "Failed to upload thumbnail" });
-      } finally {
-        setUploadingThumbnail(false);
-        input.value = "";
-      }
+      // Create preview URL
+      const url = URL.createObjectURL(file);
+      setThumbnailPreview({ file, url, title });
     };
 
     // trigger file picker
     input.click();
+  };
+
+  const uploadThumbnail = async () => {
+    if (!thumbnailPreview) return;
+
+    setUploadingThumbnail(true);
+    setMessage(null);
+
+    const formData = new FormData();
+    formData.append("file", thumbnailPreview.file);
+    formData.append("title", thumbnailPreview.title);
+
+    try {
+      const res = await fetch("/api/content/projects/thumbnail", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (res.ok) {
+        await loadProjectPdfs();
+        await revalidateCache("/"); // Revalidate after thumbnail change
+        setMessage({ type: "success", text: "Thumbnail updated!" });
+        setTimeout(() => setMessage(null), 2000);
+        // Clean up preview
+        URL.revokeObjectURL(thumbnailPreview.url);
+        setThumbnailPreview(null);
+      } else {
+        const error = await res.json();
+        setMessage({ type: "error", text: error.error || "Upload failed" });
+      }
+    } catch {
+      setMessage({ type: "error", text: "Failed to upload thumbnail" });
+    } finally {
+      setUploadingThumbnail(false);
+    }
+  };
+
+  const cancelThumbnailUpload = () => {
+    if (thumbnailPreview) {
+      URL.revokeObjectURL(thumbnailPreview.url);
+      setThumbnailPreview(null);
+    }
   };
 
   const hasUnsavedChanges = content && originalContent
@@ -229,6 +250,19 @@ export default function AdminPage() {
       router.push("/admin/login");
     }
   }, [router]);
+
+  // Trigger cache revalidation after content updates
+  const revalidateCache = async (path?: string) => {
+    try {
+      await fetch("/api/revalidate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ path }),
+      });
+    } catch (error) {
+      console.error("Failed to revalidate cache:", error);
+    }
+  };
 
   const loadContent = useCallback(async () => {
     try {
@@ -266,23 +300,10 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (activeTab === "projects") {
-      loadProjects();
       loadProjectPdfs();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
-
-  const loadProjects = async () => {
-    try {
-      const res = await fetch("/api/content/projects");
-      if (res.ok) {
-        const data = await res.json();
-        setProjectsList(data.projects || []);
-      }
-    } catch (error) {
-      console.error("Failed to load projects:", error);
-    }
-  };
 
   const loadProjectPdfs = async () => {
     try {
@@ -333,6 +354,7 @@ export default function AdminPage() {
       }
 
       setOriginalContent(content);
+      await revalidateCache("/"); // Revalidate homepage after content changes
       setMessage({ type: "success", text: "All changes saved!" });
       setTimeout(() => setMessage(null), 3000);
     } catch {
@@ -477,10 +499,13 @@ export default function AdminPage() {
 
         {/* Hero Section */}
         {activeTab === "hero" && (
-          <div className="space-y-6">
+          <div className="space-y-8">
             <h2 className="text-2xl font-bold">Hero Section</h2>
 
-            <div className="space-y-4">
+            {/* Basic Information */}
+            <div className="space-y-4 p-6 border rounded-lg">
+              <h3 className="text-lg font-semibold mb-4">Basic Information</h3>
+
               <div>
                 <label className="block text-sm font-medium mb-2">Name</label>
                 <input
@@ -509,85 +534,176 @@ export default function AdminPage() {
                   rows={4}
                 />
               </div>
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-2">Profile picture</label>
-                <div className="flex items-center gap-4">
-                  <div className="w-24 h-24 rounded-full overflow-hidden border">
-                    <img
-                      src={profilePreviewUrl || withBasePath("/profile-picture/fereshteh_portrait.avif")}
-                      alt="Profile"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+            {/* Profile Picture */}
+            <div className="space-y-4 p-6 border rounded-lg">
+              <h3 className="text-lg font-semibold mb-4">Profile Picture</h3>
 
-                  <div className="flex flex-col gap-2">
-                    <input
-                      ref={(el) => (profileInputRef.current = el)}
-                      type="file"
-                      accept=".png,.jpg,.jpeg,.webp,.avif"
-                      className="hidden"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (!file) return;
-                        setSelectedProfileFile(file);
+              <div className="flex items-start gap-6">
+                <div className="w-24 h-24 rounded-full overflow-hidden border flex-shrink-0">
+                  <img
+                    src={profilePreviewUrl || withBasePath("/profile-picture/fereshteh_portrait.avif")}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
+                <div className="flex-1 space-y-3">
+                  <input
+                    ref={(el) => (profileInputRef.current = el)}
+                    type="file"
+                    accept=".png,.jpg,.jpeg,.webp,.avif"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      setSelectedProfileFile(file);
+                      try {
+                        const url = URL.createObjectURL(file);
+                        setProfilePreviewUrl(url);
+                      } catch {
+                        setProfilePreviewUrl(null);
+                      }
+                    }}
+                  />
+
+                  <div className="flex items-center gap-2">
+                    <Button variant="outline" onPress={() => profileInputRef.current?.click()}>
+                      Choose image
+                    </Button>
+
+                    <Button
+                      onPress={async () => {
+                        if (!selectedProfileFile) return;
+                        setUploadingProfilePicture(true);
+                        setMessage(null);
+
                         try {
-                          const url = URL.createObjectURL(file);
-                          setProfilePreviewUrl(url);
+                          const formData = new FormData();
+                          formData.append("file", selectedProfileFile);
+
+                          const res = await fetch("/api/content/site/profile-picture", {
+                            method: "POST",
+                            body: formData,
+                          });
+
+                          if (res.ok) {
+                            setMessage({ type: "success", text: "Profile picture uploaded!" });
+                            setSelectedProfileFile(null);
+                            setTimeout(() => setMessage(null), 3000);
+                            setTimeout(() => setProfilePreviewUrl(null), 500);
+                          } else {
+                            const error = await res.json();
+                            setMessage({ type: "error", text: error.error || "Upload failed" });
+                          }
                         } catch {
-                          setProfilePreviewUrl(null);
+                          setMessage({ type: "error", text: "Failed to upload profile picture" });
+                        } finally {
+                          setUploadingProfilePicture(false);
                         }
                       }}
-                    />
-
-                    <div className="flex items-center gap-2">
-                      <Button variant="outline" onPress={() => profileInputRef.current?.click()}>
-                        Choose image
-                      </Button>
-
-                      <Button
-                        onPress={async () => {
-                          if (!selectedProfileFile) return;
-                          setUploadingProfilePicture(true);
-                          setMessage(null);
-
-                          try {
-                            const formData = new FormData();
-                            formData.append("file", selectedProfileFile);
-
-                            const res = await fetch("/api/content/site/profile-picture", {
-                              method: "POST",
-                              body: formData,
-                            });
-
-                            if (res.ok) {
-                              setMessage({ type: "success", text: "Profile picture uploaded!" });
-                              setSelectedProfileFile(null);
-                              setTimeout(() => setMessage(null), 3000);
-                              // revoke preview and reload served image by clearing preview
-                              setTimeout(() => setProfilePreviewUrl(null), 500);
-                            } else {
-                              const error = await res.json();
-                              setMessage({ type: "error", text: error.error || "Upload failed" });
-                            }
-                          } catch {
-                            setMessage({ type: "error", text: "Failed to upload profile picture" });
-                          } finally {
-                            setUploadingProfilePicture(false);
-                          }
-                        }}
-                        isDisabled={!selectedProfileFile || uploadingProfilePicture}
-                      >
-                        {uploadingProfilePicture ? "Uploading..." : "Upload image"}
-                      </Button>
-                    </div>
-
-                    {selectedProfileFile && (
-                      <div className="text-sm text-muted-fg">Selected: {selectedProfileFile.name}</div>
-                    )}
+                      isDisabled={!selectedProfileFile || uploadingProfilePicture}
+                    >
+                      {uploadingProfilePicture ? "Uploading..." : "Upload"}
+                    </Button>
                   </div>
+
+                  {selectedProfileFile && (
+                    <p className="text-sm text-muted-fg">Selected: {selectedProfileFile.name}</p>
+                  )}
                 </div>
               </div>
+            </div>
+
+            {/* CV / Resume */}
+            <div className="space-y-4 p-6 border rounded-lg">
+              <h3 className="text-lg font-semibold mb-4">CV / Resume</h3>
+
+              <div className="space-y-3">
+                <input
+                  ref={(el) => (cvInputRef.current = el)}
+                  type="file"
+                  accept=".pdf"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    setSelectedCvFile(file);
+                  }}
+                />
+
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" onPress={() => cvInputRef.current?.click()}>
+                    Choose PDF
+                  </Button>
+
+                  <Button
+                    onPress={async () => {
+                      if (!selectedCvFile) return;
+                      setUploadingCv(true);
+                      setMessage(null);
+
+                      try {
+                        const formData = new FormData();
+                        formData.append("file", selectedCvFile);
+
+                        const res = await fetch("/api/content/cv", {
+                          method: "POST",
+                          body: formData,
+                        });
+
+                        if (res.ok) {
+                          setMessage({ type: "success", text: "CV uploaded successfully!" });
+                          setSelectedCvFile(null);
+                          setTimeout(() => setMessage(null), 3000);
+                        } else {
+                          const error = await res.json();
+                          setMessage({ type: "error", text: error.error || "Upload failed" });
+                        }
+                      } catch {
+                        setMessage({ type: "error", text: "Failed to upload CV" });
+                      } finally {
+                        setUploadingCv(false);
+                      }
+                    }}
+                    isDisabled={!selectedCvFile || uploadingCv}
+                  >
+                    {uploadingCv ? "Uploading..." : "Upload"}
+                  </Button>
+                </div>
+
+                {selectedCvFile && (
+                  <p className="text-sm text-muted-fg">Selected: {selectedCvFile.name}</p>
+                )}
+
+                <p className="text-sm text-muted-fg">
+                  Current: <a href="/documents/cv_Fereshteh_Hosseini.pdf" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">cv_Fereshteh_Hosseini.pdf</a>
+                </p>
+
+                <div className="flex items-center gap-3 pt-2 border-t">
+                  <input
+                    type="checkbox"
+                    id="showResumeButton"
+                    checked={content.hero.showResumeButton}
+                    onChange={(e) =>
+                      setContent({
+                        ...content,
+                        hero: { ...content.hero, showResumeButton: e.target.checked },
+                      })
+                    }
+                    className="size-4"
+                  />
+                  <label htmlFor="showResumeButton" className="text-sm font-medium">
+                    Show resume button on homepage
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            {/* Display Options */}
+            <div className="space-y-4 p-6 border rounded-lg">
+              <h3 className="text-lg font-semibold mb-4">Display Options</h3>
 
               <div className="flex items-center gap-3">
                 <input
@@ -604,24 +720,6 @@ export default function AdminPage() {
                 />
                 <label htmlFor="availableForWork" className="text-sm font-medium">
                   Available for work
-                </label>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <input
-                  type="checkbox"
-                  id="showResumeButton"
-                  checked={content.hero.showResumeButton}
-                  onChange={(e) =>
-                    setContent({
-                      ...content,
-                      hero: { ...content.hero, showResumeButton: e.target.checked },
-                    })
-                  }
-                  className="size-4"
-                />
-                <label htmlFor="showResumeButton" className="text-sm font-medium">
-                  Show resume button
                 </label>
               </div>
             </div>
@@ -769,7 +867,10 @@ export default function AdminPage() {
               <hr className="my-6 border-border" />
 
               <div className="flex items-center justify-between">
-                <h3 className="text-xl font-bold">Skills</h3>
+                <div>
+                  <h3 className="text-xl font-bold">Skills</h3>
+                  <p className="text-sm text-muted-fg">Drag to reorder</p>
+                </div>
                 <Button
                   onPress={() => {
                     setEditingSkill({
@@ -978,9 +1079,29 @@ export default function AdminPage() {
                 {(content.skills || []).map((skill, index) => (
                   <div
                     key={skill.name}
-                    className="p-4 rounded-lg border bg-secondary/10 flex items-center justify-between"
+                    draggable
+                    onDragStart={() => setDraggedSkillIndex(index)}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      if (draggedSkillIndex === null || draggedSkillIndex === index) return;
+
+                      const skills = [...(content.skills || [])];
+                      const [movedSkill] = skills.splice(draggedSkillIndex, 1);
+                      skills.splice(index, 0, movedSkill);
+
+                      setContent({ ...content, skills });
+                      setDraggedSkillIndex(null);
+                    }}
+                    onDragEnd={() => setDraggedSkillIndex(null)}
+                    className={`p-4 rounded-lg border bg-secondary/10 flex items-center justify-between cursor-move transition-all ${
+                      draggedSkillIndex === index ? "opacity-50" : "hover:bg-secondary/20"
+                    }`}
                   >
                     <div className="flex items-center gap-4">
+                      <Icons.GripVertical className="size-5 text-muted-fg shrink-0" />
                       <div className="size-10 flex items-center justify-center border rounded-lg bg-bg">
                         {skill.customIcon ? (
                           <img src={withBasePath(skill.customIcon)} alt={skill.name} className="size-6" />
@@ -1189,6 +1310,7 @@ export default function AdminPage() {
 
                 setUploadingPdf(false);
                 await loadProjectPdfs();
+                await revalidateCache("/"); // Revalidate after PDF upload
                 setMessage({ type: "success", text: "Files uploaded! Image conversion running in background." });
                 setTimeout(() => setMessage(null), 5000);
               }}
@@ -1340,7 +1462,8 @@ export default function AdminPage() {
                       <div className="flex gap-2">
                         <Button
                           variant="outline"
-                          size="sm"
+                          size="md"
+                          className="px-4 py-2.5"
                           onPress={() => openThumbnailPicker(item.title)}
                           isDisabled={uploadingThumbnail}
                         >
@@ -1349,8 +1472,9 @@ export default function AdminPage() {
                         </Button>
 
                         <Button
-                          variant="ghost"
-                          size="sm"
+                          variant="outline"
+                          size="md"
+                          className="px-4 py-2.5"
                           onPress={() => {
                             // derive key from pdf filename
                             try {
@@ -1368,8 +1492,9 @@ export default function AdminPage() {
                         </Button>
 
                         <Button
-                          variant="ghost"
-                          size="sm"
+                          variant="outline"
+                          size="md"
+                          className="px-4 py-2.5"
                           onPress={async () => {
                             if (!confirm(`Delete "${item.title}"?`)) return;
 
@@ -1382,6 +1507,7 @@ export default function AdminPage() {
 
                               if (res.ok) {
                                 await loadProjectPdfs();
+                                await revalidateCache("/"); // Revalidate after deletion
                                 setMessage({ type: "success", text: "Deleted!" });
                                 setTimeout(() => setMessage(null), 2000);
                               }
@@ -1439,6 +1565,7 @@ export default function AdminPage() {
 
                             if (res.ok) {
                               await loadProjectPdfs();
+                              await revalidateCache("/"); // Revalidate after metadata update
                               setEditingPdf(null);
                               setMessage({ type: "success", text: "Metadata saved!" });
                               setTimeout(() => setMessage(null), 2000);
@@ -1464,101 +1591,49 @@ export default function AdminPage() {
                   </div>
                 )}
 
-                {/* MDX Projects Section */}
-            {projectsList.length > 0 && (
-              <>
-                <hr className="my-6 border-border" />
-                <div className="flex items-center justify-between">
-                  <h3 className="text-xl font-bold">MDX Projects</h3>
-                </div>
-
-                {editingProject && (
-                  <div className="p-6 rounded-lg border bg-secondary/10 space-y-4">
-                    <h3 className="font-semibold text-lg">Edit Project</h3>
-
-                    <div>
-                      <label className="block text-sm font-medium mb-2">Title</label>
-                      <input
-                        type="text"
-                        value={editingProject.name}
-                        onChange={(e) => setEditingProject({ ...editingProject, name: e.target.value })}
-                        className="w-full px-4 py-3 rounded-lg border bg-bg focus:ring-2 focus:ring-primary outline-none"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium mb-2">Subtitle</label>
-                      <input
-                        type="text"
-                        value={editingProject.subtitle || ""}
-                        onChange={(e) => setEditingProject({ ...editingProject, subtitle: e.target.value })}
-                        className="w-full px-4 py-3 rounded-lg border bg-bg focus:ring-2 focus:ring-primary outline-none"
-                      />
-                    </div>
-
-                    <div className="flex gap-2 pt-4">
-                      <Button
-                        onPress={async () => {
-                          if (!editingProject) return;
-                          setSaving(true);
-                          setMessage(null);
-                          try {
-                            const res = await fetch("/api/content/projects", {
-                              method: "PUT",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({ path: editingProject.path, data: { name: editingProject.name, subtitle: editingProject.subtitle || "" } }),
-                            });
-
-                            if (res.ok) {
-                              await loadProjects();
-                              setEditingProject(null);
-                              setMessage({ type: "success", text: "Project saved!" });
-                              setTimeout(() => setMessage(null), 3000);
-                            } else {
-                              setMessage({ type: "error", text: "Failed to save project" });
-                            }
-                          } catch {
-                            setMessage({ type: "error", text: "Failed to save project" });
-                          } finally {
-                            setSaving(false);
-                          }
-                        }}
-                        isDisabled={saving}
-                      >
-                        <Icons.Save className="size-4 mr-2" />
-                        {saving ? "Saving..." : "Save Project"}
-                      </Button>
-
-                      <Button variant="ghost" onPress={() => setEditingProject(null)}>
-                        Cancel
-                      </Button>
-                    </div>
-                  </div>
-                )}
-
-                <div className="space-y-4">
-                  {projectsList.map((p) => (
-                    <div key={p.url ?? p.path} className="p-4 rounded-lg border bg-secondary/10">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h3 className="font-semibold">{p.name}</h3>
-                          {p.subtitle && <p className="text-sm text-muted-fg">{p.subtitle}</p>}
-                        </div>
-                        <div className="flex gap-2">
-                          <Button variant="ghost" size="sm" onPress={() => setEditingProject({ path: p.path, name: p.name, subtitle: p.subtitle })}>
-                            <Icons.Edit className="size-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
           </div>
         )}
 
       </div>
+
+      {/* Thumbnail Preview Dialog */}
+      {thumbnailPreview && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="max-w-2xl w-full mx-4 p-6 rounded-lg border bg-bg shadow-lg">
+            <h3 className="text-xl font-bold mb-4">Preview Thumbnail</h3>
+
+            <div className="mb-4">
+              <p className="text-sm text-muted-fg mb-2">
+                Project: <span className="font-semibold">{thumbnailPreview.title}</span>
+              </p>
+              <div className="relative w-full aspect-square max-w-md mx-auto rounded-lg overflow-hidden border bg-secondary/10">
+                <img
+                  src={thumbnailPreview.url}
+                  alt="Thumbnail preview"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-2 justify-end">
+              <Button
+                variant="ghost"
+                onPress={cancelThumbnailUpload}
+                isDisabled={uploadingThumbnail}
+              >
+                Cancel
+              </Button>
+              <Button
+                onPress={uploadThumbnail}
+                isDisabled={uploadingThumbnail}
+              >
+                <Icons.Upload className="size-4 mr-2" />
+                {uploadingThumbnail ? "Uploading..." : "Upload Thumbnail"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

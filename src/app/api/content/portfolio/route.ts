@@ -5,6 +5,9 @@ import { join } from "node:path";
 import { validateSession } from "~/lib/auth";
 import { getPortfolioItems } from "~/lib/portfolio";
 
+// Cache for 30 seconds - balances performance with CMS freshness
+export const revalidate = 30;
+
 const PORTFOLIO_ORDER_FILE = join(
   process.cwd(),
   "src/content/data/portfolio-order.json"
