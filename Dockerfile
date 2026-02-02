@@ -1,4 +1,4 @@
-FROM oven/bun:1 AS base
+FROM oven/bun:1-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -15,8 +15,8 @@ COPY . .
 
 RUN bun run build
 
-# Production image
-FROM base AS runner
+# Production image - use slim Alpine for smallest size
+FROM oven/bun:1-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
