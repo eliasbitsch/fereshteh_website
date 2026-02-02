@@ -5,7 +5,8 @@ FROM base AS deps
 WORKDIR /app
 
 COPY package.json bun.lock* ./
-RUN bun install --frozen-lockfile
+# Use --no-cache to reduce temp disk usage during install
+RUN bun install --frozen-lockfile --no-cache
 
 # Build the application
 FROM base AS builder
