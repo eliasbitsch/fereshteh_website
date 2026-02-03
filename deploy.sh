@@ -16,8 +16,10 @@ if [ ! -f .env.prod ]; then
     exit 1
 fi
 
-# Load environment variables
+# Load environment variables and export them for docker compose
+set -a
 source .env.prod
+set +a
 
 # Check if GITHUB_REPOSITORY is set
 if [ -z "$GITHUB_REPOSITORY" ]; then
