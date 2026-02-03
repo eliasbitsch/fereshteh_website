@@ -1,40 +1,8 @@
-networks:
-  traefik-public:
-    external: true
-
 services:
-  traefik:
-    image: traefik:v3.3
-    container_name: traefik
-    restart: unless-stopped
-    security_opt:
-      - no-new-privileges:true
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./traefik.yml:/etc/traefik/traefik.yml:ro
-      - ./letsencrypt:/letsencrypt
-    networks:
-      - traefik-public
-    labels:
-      - "traefik.enable=true"
-      # Dashboard
-      - "traefik.http.routers.traefik-dashboard.rule=Host(`traefik.fereshteh-hosseini.com`)"
-      - "traefik.http.routers.traefik-dashboard.entrypoints=websecure"
-      - "traefik.http.routers.traefik-dashboard.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.traefik-dashboard.service=api@internal"
-      - "traefik.http.routers.traefik-dashboard.middlewares=auth"
-      # Basic auth for dashboard (user: admin, pass: changeme)
-      # Generate with: echo $(htpasswd -nb admin changeme) | sed -e s/\\$/\\$\\$/g
-      - "traefik.http.middlewares.auth.basicauth.users=admin:$$apr1$$8EVjn/nj$$GiLUZqcbueTFeD23SuB6x0"
-
   web:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: fereshteh-website
     volumes:
       # Persist CMS content changes
       - ./src/content/data:/app/src/content/data
@@ -46,17 +14,3 @@ services:
     environment:
       - NODE_ENV=production
     restart: unless-stopped
-    networks:
-      - traefik-public
-    labels:
-      - "traefik.enable=true"
-      # HTTP router
-      - "traefik.http.routers.fereshteh-web.rule=Host(`fereshteh-hosseini.com`) || Host(`www.fereshteh-hosseini.com`)"
-      - "traefik.http.routers.fereshteh-web.entrypoints=websecure"
-      - "traefik.http.routers.fereshteh-web.tls.certresolver=letsencrypt"
-      # Service
-      - "traefik.http.services.fereshteh-web.loadbalancer.server.port=3000"
-      # WWW redirect middleware
-      - "traefik.http.middlewares.www-redirect.redirectregex.regex=^https://www\\.fereshteh-hosseini\\.com/(.*)"
-      - "traefik.http.middlewares.www-redirect.redirectregex.replacement=https://fereshteh-hosseini.com/$${1}"
-      - "traefik.http.routers.fereshteh-web.middlewares=www-redirect"
