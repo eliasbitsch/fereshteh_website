@@ -12,9 +12,8 @@ import {
   getSkills,
 } from "~/lib/content-loader";
 
-// Revalidate every 60 seconds (ISR-like behavior for CMS)
-// Content stays cached but refreshes after admin edits
-export const revalidate = 60;
+// Disable caching - always fetch fresh content
+export const dynamic = "force-dynamic";
 
 export default function Home() {
   const projectItems = getProjectPdfItems();

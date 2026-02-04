@@ -1,12 +1,13 @@
-pre-commit:
-  jobs:
-    - run: bun run lint:fix
-      glob:
-        - "*.js"
-        - "*.jsx"
-        - "*.ts"
-        - "*.tsx"
-        - "*.json"
-        - "*.jsonc"
-        - "*.css"
-      stage_fixed: true
+# Disabled - bun not available on server
+# pre-commit:
+#   jobs:
+#     - run: bun run lint:fix
+#       glob:
+#         - "*.js"
+#         - "*.jsx"
+#         - "*.ts"
+#         - "*.tsx"
+#         - "*.json"
+#         - "*.jsonc"
+#         - "*.css"
+#       stage_fixed: true
