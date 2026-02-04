@@ -1,9 +1,11 @@
 import { cookies } from "next/headers";
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import { writeFile, mkdir } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { join, extname } from "node:path";
 import { validateSession } from "~/lib/auth";
+import { incrementProfilePictureVersion } from "~/lib/content";
 import sharp from "sharp";
 
 async function checkAuth(): Promise<boolean> {
@@ -61,7 +63,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, filename: originalName, warning: "Conversion failed" });
     }
 
-    return NextResponse.json({ success: true, filename: avifName });
+    // Increment version to bust cache
+    const newVersion = incrementProfilePictureVersion();
+
+    // Revalidate homepage to show new image immediately
+    revalidatePath("/");
+
+    return NextResponse.json({ success: true, filename: avifName, version: newVersion });
   } catch (error) {
     console.error("Profile picture upload error:", error);
     return NextResponse.json({ error: "Failed to upload file" }, { status: 500 });

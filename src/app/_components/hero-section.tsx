@@ -12,9 +12,10 @@ interface HeroSectionProps {
   bio: string;
   availableForWork?: boolean;
   showResumeButton?: boolean;
+  profilePictureVersion?: number;
 }
 
-export function HeroSection({ name, bio, availableForWork, showResumeButton = true }: HeroSectionProps) {
+export function HeroSection({ name, bio, availableForWork, showResumeButton = true, profilePictureVersion = 1 }: HeroSectionProps) {
   return (
     <section id="home" className="relative flex items-center justify-center overflow-hidden rounded-md py-20 pb-32 md:py-20 md:pb-50 scroll-mt-20">
       <GridPattern />
@@ -24,7 +25,7 @@ export function HeroSection({ name, bio, availableForWork, showResumeButton = tr
         <div className="grid justify-items-center gap-4">
           <div className="size-[250px] animate-delay-100 animate-fade-up">
             <Image
-              src={withBasePath("/profile-picture/fereshteh_portrait.avif")}
+              src={`${withBasePath("/profile-picture/fereshteh_portrait.avif")}?v=${profilePictureVersion}`}
               alt="Portrait"
               width={250}
               height={250}

@@ -30,11 +30,13 @@ async function convertPDFsToImages() {
       const image = sharp(page);
       const metadata = await image.metadata();
 
-      console.log(`  Original dimensions: ${metadata.width}x${metadata.height}`);
+      console.log(
+        `  Original dimensions: ${metadata.width}x${metadata.height}`
+      );
 
       // Resize to reasonable size for web display (WebP has 16383x16383 limit)
-      const maxDimension = 12000; // Keep well below the limit
-      let resizeOptions: { width?: number; height?: number } = {};
+      const maxDimension = 12_000; // Keep well below the limit
+      const resizeOptions: { width?: number; height?: number } = {};
 
       if (metadata.width && metadata.height) {
         if (metadata.width > metadata.height) {
@@ -44,7 +46,7 @@ async function convertPDFsToImages() {
         }
       }
 
-      let pipeline = image.resize({
+      const pipeline = image.resize({
         ...resizeOptions,
         fit: "inside",
         withoutEnlargement: true,

@@ -32,6 +32,7 @@ export default function Home() {
         bio={heroContent.bio}
         availableForWork={heroContent.availableForWork}
         showResumeButton={heroContent.showResumeButton}
+        profilePictureVersion={heroContent.profilePictureVersion}
       />
       <section id="portfolio" className="container scroll-mt-24 max-w-6xl">
         <h2 className="mb-10 font-semibold text-2xl md:text-3xl">{sectionsContent?.portfolioTitle || "Portfolio"}</h2>

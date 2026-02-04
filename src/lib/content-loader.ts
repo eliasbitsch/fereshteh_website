@@ -54,7 +54,10 @@ export function getExperiences() {
 
 export function getHeroContent() {
   const content = loadContent();
-  return content.hero;
+  return {
+    ...content.hero,
+    profilePictureVersion: content.site?.profilePictureVersion || 1,
+  };
 }
 
 export function getAboutContent() {

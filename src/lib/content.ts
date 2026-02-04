@@ -20,6 +20,7 @@ export interface SiteContent {
   description: string;
   email: string;
   linkedIn: string;
+  profilePictureVersion?: number;
 }
 
 export interface SectionsContent {
@@ -171,4 +172,13 @@ export function updateSkills(skills: SkillContent[]): ContentData {
   content.skills = skills;
   saveContent(content);
   return content;
+}
+
+export function incrementProfilePictureVersion(): number {
+  const content = getContent();
+  const currentVersion = content.site.profilePictureVersion || 1;
+  const newVersion = currentVersion + 1;
+  content.site.profilePictureVersion = newVersion;
+  saveContent(content);
+  return newVersion;
 }
