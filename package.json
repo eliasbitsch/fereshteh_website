@@ -7,7 +7,7 @@
     "postinstall": "fumadocs-mdx",
     "dev": "bun --bun run next dev --turbo",
     "build": "next build",
-    "build:static": "STATIC_EXPORT=true next build",
+    "build:static": "STATIC_EXPORT=true NEXT_PUBLIC_STATIC_EXPORT=true next build",
     "start": "next start",
     "preview": "next build && next start",
     "format": "biome format --write",
