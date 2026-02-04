@@ -21,7 +21,7 @@ entryPoints:
 certificatesResolvers:
   letsencrypt:
     acme:
-      email: fereshteh-hosseini.com
+      email: fereshteh512@gmail.com
       storage: /letsencrypt/acme.json
       httpChallenge:
         entryPoint: web
