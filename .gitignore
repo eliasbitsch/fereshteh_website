@@ -43,4 +43,4 @@ next-env.d.ts
 .source
 
 # CMS sessions (sensitive, don't commit)
-src/content/data/sessions.json
+src/content/data/sessions.json# Trigger rebuild
