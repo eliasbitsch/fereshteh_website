@@ -27,12 +27,15 @@ jobs:
         run: |
           mkdir -p deploy
           cp -r .next deploy/
-          cp -r public deploy/
           cp -r src deploy/
           cp package.json deploy/
           cp bun.lock* deploy/ || true
           cp next.config.ts deploy/
           cp tsconfig.json deploy/
+          # Copy only static public files, not user uploads
+          mkdir -p deploy/public
+          cp -r public/icons deploy/public/ || true
+          cp -r public/documents deploy/public/ || true
           tar -czf deploy.tar.gz -C deploy .
       
       - name: Deploy to VPS
@@ -54,6 +57,17 @@ jobs:
           port: ${{ secrets.VPS_PORT }}
           script: |
             cd /home/apps/fereshteh_website
+            # Backup user uploads before extraction
+            mkdir -p /tmp/backup_uploads
+            cp -r public/projects /tmp/backup_uploads/ 2>/dev/null || true
+            cp -r public/projects-jpg /tmp/backup_uploads/ 2>/dev/null || true
+            cp -r public/projects-thumbnails /tmp/backup_uploads/ 2>/dev/null || true
+            cp -r public/profile-picture /tmp/backup_uploads/ 2>/dev/null || true
+            # Extract new build
             tar -xzf /tmp/deploy.tar.gz
             rm /tmp/deploy.tar.gz
-            systemctl restart fereshteh-website || true
+            # Restore user uploads
+            cp -r /tmp/backup_uploads/* public/ 2>/dev/null || true
+            rm -rf /tmp/backup_uploads
+            # Restart service
+            systemctl restart fereshteh-website
