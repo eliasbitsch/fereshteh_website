@@ -24,15 +24,15 @@ export function HeroSection({
 }: HeroSectionProps) {
   return (
     <section
-      className="relative flex scroll-mt-20 items-center justify-center overflow-hidden rounded-md py-20 pb-32 md:py-20 md:pb-50"
+      className="relative flex scroll-mt-16 items-center justify-center overflow-hidden rounded-md py-12 pb-24 sm:scroll-mt-20 sm:py-16 sm:pb-32 md:py-20 md:pb-50"
       id="home"
     >
       <GridPattern />
       <ShadowEffect />
 
-      <div className="container max-w-6xl space-y-4">
-        <div className="grid justify-items-center gap-4">
-          <div className="size-[250px] animate-delay-100 animate-fade-up">
+      <div className="container max-w-6xl space-y-3 sm:space-y-4">
+        <div className="grid justify-items-center gap-3 sm:gap-4">
+          <div className="size-[180px] animate-delay-100 animate-fade-up sm:size-[220px] md:size-[250px]">
             <Image
               alt="Portrait"
               className="rounded-full"
@@ -43,25 +43,25 @@ export function HeroSection({
           </div>
         </div>
         {availableForWork ? (
-          <div className="mt-20 flex justify-center">
-            <BadgeAnimated className="flex animate-delay-300 animate-fade-up items-center gap-2 text-sm">
+          <div className="mt-12 flex justify-center sm:mt-16 md:mt-20">
+            <BadgeAnimated className="flex animate-delay-300 animate-fade-up items-center gap-2 text-xs sm:text-sm">
               <Icons.Circle className="size-2 animate-pulse fill-success text-success" />
               Available for work
             </BadgeAnimated>
           </div>
         ) : (
-          <div className="mt-20 h-6" />
+          <div className="mt-12 h-6 sm:mt-16 md:mt-20" />
         )}
-        <h1 className="animate-delay-300 animate-fade-up text-center font-bold text-5xl md:text-7xl">
+        <h1 className="animate-delay-300 animate-fade-up text-center font-bold text-3xl sm:text-4xl md:text-5xl lg:text-7xl">
           {name}
         </h1>
-        <p className="mx-auto max-w-lg animate-delay-300 animate-fade-up text-balance text-center text-muted-fg">
+        <p className="mx-auto max-w-lg animate-delay-300 animate-fade-up text-balance px-4 text-center text-muted-fg text-sm sm:px-0 sm:text-base">
           {bio}
         </p>
         {showResumeButton ? (
-          <div className="flex animate-delay-400 animate-fade-up items-center justify-center gap-5">
+          <div className="flex animate-delay-400 animate-fade-up items-center justify-center gap-5 pt-2">
             <LinkButton
-              className="group rounded-full"
+              className="group rounded-full text-sm"
               href={withBasePath("/documents/cv_Fereshteh_Hosseini.pdf")}
               rel="noopener noreferrer"
               target="_blank"
@@ -71,7 +71,7 @@ export function HeroSection({
             </LinkButton>
           </div>
         ) : (
-          <div className="h-10" />
+          <div className="h-8 sm:h-10" />
         )}
       </div>
 

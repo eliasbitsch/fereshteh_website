@@ -10,12 +10,12 @@ const PDF_QUALITY = Math.min(
   100,
   Math.max(1, Number(process.env.PDF_QUALITY) || 95)
 );
-const PDF_EFFORT = Math.min(
+const _PDF_EFFORT = Math.min(
   9,
   Math.max(0, Number(process.env.PDF_EFFORT) || 6)
 );
 const PDF_MAX_DIM = Math.max(1000, Number(process.env.PDF_MAX_DIM) || 6000);
-const PDF_LOSSLESS =
+const _PDF_LOSSLESS =
   process.env.PDF_LOSSLESS === "1" || process.env.PDF_LOSSLESS === "true";
 
 async function convertPdfToJpg() {

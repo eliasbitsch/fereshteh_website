@@ -1,13 +1,16 @@
 import { describe, expect, it } from "vitest";
 import { formatDate, getAge } from "~/utils/date";
 
+const MONTH_PATTERN = /Jan|January/;
+const YEAR_PATTERN = /2024/;
+
 describe("Date Utilities", () => {
   describe("formatDate", () => {
     it("should format date correctly", () => {
       const date = new Date("2024-01-15");
       const formatted = formatDate(date);
 
-      expect(formatted).toMatch(/Jan|January/); // Different formats possible
+      expect(formatted).toMatch(MONTH_PATTERN); // Different formats possible
       expect(formatted).toContain("15");
       expect(formatted).toContain("2024");
     });
@@ -15,7 +18,7 @@ describe("Date Utilities", () => {
     it("should handle string dates", () => {
       const formatted = formatDate("2024-01-15");
 
-      expect(formatted).toMatch(/2024/);
+      expect(formatted).toMatch(YEAR_PATTERN);
     });
   });
 

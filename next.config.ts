@@ -75,8 +75,9 @@ const config: NextConfig = {
     // Ensure pdfjs-dist is handled correctly
     config.module = config.module || {};
     config.module.rules = config.module.rules || [];
+    const mjsPattern = /\.m?js$/;
     config.module.rules.push({
-      test: /\.m?js$/,
+      test: mjsPattern,
       type: "javascript/auto",
       resolve: {
         fullySpecified: false,

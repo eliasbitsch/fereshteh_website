@@ -19,14 +19,18 @@ export function AboutSection({
 }: AboutSectionProps) {
   return (
     <section className="container max-w-6xl">
-      <h2 className="mb-10 font-semibold text-2xl md:text-3xl">{title}</h2>
+      <h2 className="mb-6 font-semibold text-xl sm:mb-8 sm:text-2xl md:mb-10 md:text-3xl">
+        {title}
+      </h2>
 
-      <div className="mb-8 max-w-3xl">
-        <p className="text-muted-fg leading-relaxed">{description}</p>
+      <div className="mb-6 max-w-3xl sm:mb-8">
+        <p className="text-muted-fg text-sm leading-relaxed sm:text-base">
+          {description}
+        </p>
       </div>
 
       <m.div
-        className="motion grid gap-4 md:grid-cols-2"
+        className="motion grid gap-3 sm:gap-4 md:grid-cols-2"
         initial={{
           y: 40,
           opacity: 0,

@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("File Upload Integration", () => {
+  // biome-ignore lint/suspicious/noSkippedTests: Requires authentication setup
   test.skip("admin can upload project PDF", async ({ page }) => {
     // This test is skipped by default as it requires authentication
     // To run: Set up test admin account and remove .skip

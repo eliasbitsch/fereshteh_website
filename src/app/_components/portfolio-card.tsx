@@ -18,7 +18,7 @@ export function PortfolioCard({
 }: PortfolioCardProps) {
   return (
     <Link
-      className="group relative flex flex-col overflow-hidden rounded-xl border bg-card transition-all hover:border-fg/20 hover:shadow-lg"
+      className="group relative flex flex-col overflow-hidden rounded-lg border bg-card transition-all hover:border-fg/20 hover:shadow-lg sm:rounded-xl"
       href={`/portfolio/${encodeURIComponent(slug)}`}
     >
       <div className="relative aspect-[16/9] w-full overflow-hidden bg-muted">
@@ -30,9 +30,15 @@ export function PortfolioCard({
           src={thumbnailPath}
         />
       </div>
-      <div className="p-4">
-        <h3 className="font-medium text-sm md:text-base">{title}</h3>
-        {subtitle && <p className="mt-1 text-muted-fg text-xs">{subtitle}</p>}
+      <div className="p-3 sm:p-4">
+        <h3 className="line-clamp-2 font-medium text-sm sm:text-base">
+          {title}
+        </h3>
+        {subtitle && (
+          <p className="mt-1 line-clamp-1 text-muted-fg text-xs sm:text-sm">
+            {subtitle}
+          </p>
+        )}
       </div>
     </Link>
   );

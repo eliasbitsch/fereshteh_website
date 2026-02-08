@@ -101,7 +101,9 @@ export function PDFViewerClean({
 
   useEffect(() => {
     const container = scrollContainerRef.current;
-    if (!container) return;
+    if (!container) {
+      return;
+    }
 
     const handleScroll = () => {
       // Consider scrolled down if more than 50px from top
@@ -127,12 +129,17 @@ export function PDFViewerClean({
     document.body.removeChild(link);
   };
 
-  if (!isOpen) return null;
+  if (!isOpen) {
+    return null;
+  }
 
   return (
     <div
       className="fixed inset-0 z-50 flex flex-col bg-bg/98 backdrop-blur-sm"
       onClick={onClose}
+      onKeyDown={(e) => e.key === "Escape" && onClose()}
+      role="button"
+      tabIndex={0}
     >
       {/* Sticky header with back button and controls */}
       <div

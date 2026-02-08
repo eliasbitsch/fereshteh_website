@@ -1,24 +1,28 @@
 #!/usr/bin/env node
+"use strict";
 
 /**
  * Simple webhook server for automatic deployments
- * Listens for GitHub webhooks and triggers docker-compose pull & restart
+ * Listens for GitHub webhooks and triggers git pull & service restart
  */
 
-const http = require("http");
-const crypto = require("crypto");
-const { exec } = require("child_process");
+const http = require("node:http");
+const crypto = require("node:crypto");
+const { exec } = require("node:child_process");
 
 // Configuration
 const PORT = process.env.WEBHOOK_PORT || 9000;
 const SECRET = process.env.WEBHOOK_SECRET || "";
 const DEPLOY_PATH = process.env.DEPLOY_PATH || "/home/apps/fereshteh_website";
+const SERVICE_NAME = process.env.SERVICE_NAME || "fereshteh-website";
 
 function verifySignature(payload, signature) {
-  if (!SECRET) return true; // Skip verification if no secret set
+  if (!SECRET) {
+    return true; // Skip verification if no secret set
+  }
 
   const hmac = crypto.createHmac("sha256", SECRET);
-  const digest = "sha256=" + hmac.update(payload).digest("hex");
+  const digest = `sha256=${hmac.update(payload).digest("hex")}`;
   return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(digest));
 }
 
@@ -27,9 +31,10 @@ function deploy() {
 
   const commands = [
     `cd ${DEPLOY_PATH}`,
-    "docker compose -f docker-compose.prod.yml pull web",
-    "docker compose -f docker-compose.prod.yml up -d --no-deps web",
-    "docker image prune -f",
+    "git fetch origin main",
+    "git reset --hard origin/main",
+    "bun install --frozen-lockfile",
+    `systemctl restart ${SERVICE_NAME}`,
   ].join(" && ");
 
   exec(commands, (error, stdout, stderr) => {

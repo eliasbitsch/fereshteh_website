@@ -204,19 +204,26 @@ export function PortfolioViewer({ item }: PortfolioViewerProps) {
   return (
     <div className="fixed inset-0 z-[60] bg-bg">
       <div className="relative flex h-full w-full flex-col bg-bg">
-        <div className="sticky top-0 z-10 border-b bg-bg px-4 py-3">
-          <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <Button onClick={handleClose} size="sm" variant="ghost">
-                <Icons.ChevronLeft className="mr-2 size-4" />
-                Back
+        <div className="sticky top-0 z-10 border-b bg-bg px-2 py-2 sm:px-4 sm:py-3">
+          <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 sm:gap-4">
+            <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
+              <Button
+                className="shrink-0"
+                onClick={handleClose}
+                size="sm"
+                variant="ghost"
+              >
+                <Icons.ChevronLeft className="size-4 sm:mr-2" />
+                <span className="hidden sm:inline">Back</span>
               </Button>
-              <h1 className="font-semibold text-xl">{item.title}</h1>
+              <h1 className="truncate font-semibold text-base sm:text-xl">
+                {item.title}
+              </h1>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex shrink-0 items-center gap-1 sm:gap-2">
               {!isAtTop && (
                 <Button
-                  className="size-10"
+                  className="size-8 sm:size-10"
                   onPress={handleJumpToTop}
                   size="icon"
                   title="Jump to top"
@@ -225,49 +232,49 @@ export function PortfolioViewer({ item }: PortfolioViewerProps) {
                   <Icons.ArrowUp className="size-4" />
                 </Button>
               )}
-              <div className="flex h-10 items-center gap-1 rounded-lg border bg-bg p-1">
+              <div className="flex h-8 items-center gap-0.5 rounded-lg border bg-bg p-0.5 sm:h-10 sm:gap-1 sm:p-1">
                 <Button
-                  className="size-8"
+                  className="size-7 sm:size-8"
                   isDisabled={zoom <= MIN_ZOOM}
                   onPress={handleZoomOut}
                   size="icon"
                   title="Zoom out"
                   variant="ghost"
                 >
-                  <Icons.Minus className="size-4" />
+                  <Icons.Minus className="size-3 sm:size-4" />
                 </Button>
-                <span className="min-w-[3rem] text-center text-sm">
+                <span className="min-w-[2.5rem] text-center text-xs sm:min-w-[3rem] sm:text-sm">
                   {Math.round(zoom * 100)}%
                 </span>
                 <Button
-                  className="size-8"
+                  className="size-7 sm:size-8"
                   isDisabled={zoom >= MAX_ZOOM}
                   onPress={handleZoomIn}
                   size="icon"
                   title="Zoom in"
                   variant="ghost"
                 >
-                  <Icons.Plus className="size-4" />
+                  <Icons.Plus className="size-3 sm:size-4" />
                 </Button>
                 <Button
-                  className="size-8"
+                  className="size-7 sm:size-8"
                   isDisabled={zoom === 1}
                   onPress={handleResetZoom}
                   size="icon"
                   title="Reset zoom"
                   variant="ghost"
                 >
-                  <Icons.Maximize className="size-4" />
+                  <Icons.Maximize className="size-3 sm:size-4" />
                 </Button>
               </div>
               <Button
-                className="h-10"
+                className="h-8 sm:h-10"
                 onClick={handleDownload}
                 size="sm"
                 variant="outline"
               >
-                <Icons.Download className="mr-2 size-4" />
-                Download PDF
+                <Icons.Download className="size-4 sm:mr-2" />
+                <span className="hidden sm:inline">Download PDF</span>
               </Button>
             </div>
           </div>
@@ -285,7 +292,7 @@ export function PortfolioViewer({ item }: PortfolioViewerProps) {
             cursor: zoom > 1 ? (isDragging ? "grabbing" : "grab") : "default",
           }}
         >
-          <div className="inline-flex min-h-full min-w-full justify-center p-4">
+          <div className="inline-flex min-h-full min-w-full justify-center p-2 sm:p-4">
             <Image
               alt={item.title}
               className="h-auto select-none rounded-lg border"

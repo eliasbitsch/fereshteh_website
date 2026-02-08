@@ -20,11 +20,11 @@ const DEFAULT_QUALITY = Math.min(
   100,
   Math.max(1, Number(process.env.PDF_QUALITY) || 95)
 );
-const DEFAULT_EFFORT = Math.min(
+const _DEFAULT_EFFORT = Math.min(
   9,
   Math.max(0, Number(process.env.PDF_EFFORT) || 6)
 );
-const DEFAULT_LOSSLESS =
+const _DEFAULT_LOSSLESS =
   process.env.PDF_LOSSLESS === "1" || process.env.PDF_LOSSLESS === "true";
 
 const projectsDir = path.join(process.cwd(), "public", "projects");

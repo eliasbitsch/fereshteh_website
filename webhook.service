@@ -1,16 +1,16 @@
 [Unit]
 Description=GitHub Webhook Deployment Server
-After=network.target docker.service
-Requires=docker.service
+After=network.target
+Wants=docker.service
 
 [Service]
 Type=simple
 User=root
 WorkingDirectory=/home/apps/fereshteh_website
 Environment="WEBHOOK_PORT=9000"
-Environment="WEBHOOK_SECRET=your-webhook-secret-here"
+Environment="WEBHOOK_SECRET=efcfd96e961c94a826aaeb5652551e5dddc231e3e805db833a5850b55ac2458e"
 Environment="DEPLOY_PATH=/home/apps/fereshteh_website"
-ExecStart=/usr/bin/node /home/apps/fereshteh_website/webhook-server.js
+ExecStart=/usr/bin/node /home/apps/fereshteh_website/webhook-server.cjs
 Restart=always
 RestartSec=10
 StandardOutput=append:/var/log/webhook-deploy.log

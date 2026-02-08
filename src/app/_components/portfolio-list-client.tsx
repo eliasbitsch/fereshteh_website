@@ -17,7 +17,7 @@ export default function PortfolioListClient({
   items,
 }: PortfolioListClientProps) {
   return (
-    <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 md:gap-8">
       {items.map((item) => (
         <PortfolioCard
           key={item.pdfPath}

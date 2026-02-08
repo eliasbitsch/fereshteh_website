@@ -25,7 +25,7 @@ export default function Home() {
   const skills = getSkills();
 
   return (
-    <main className="space-y-20">
+    <main className="space-y-12 sm:space-y-16 md:space-y-20">
       <HeroSection
         availableForWork={heroContent.availableForWork}
         bio={heroContent.bio}
@@ -33,8 +33,11 @@ export default function Home() {
         profilePictureVersion={heroContent.profilePictureVersion}
         showResumeButton={heroContent.showResumeButton}
       />
-      <section className="container max-w-6xl scroll-mt-24" id="portfolio">
-        <h2 className="mb-10 font-semibold text-2xl md:text-3xl">
+      <section
+        className="container max-w-6xl scroll-mt-20 sm:scroll-mt-24"
+        id="portfolio"
+      >
+        <h2 className="mb-6 font-semibold text-xl sm:mb-8 sm:text-2xl md:mb-10 md:text-3xl">
           {sectionsContent?.portfolioTitle || "Portfolio"}
         </h2>
         <PortfolioSection items={projectItems} />
