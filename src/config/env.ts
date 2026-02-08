@@ -7,15 +7,14 @@ export const env = createEnv({
       .enum(["development", "production", "test"])
       .default("development"),
 
-    WAKATIME_API_KEY: z.string().optional(),
-
     GITHUB_TOKEN: z.string().optional(),
 
     // Feature flags
     AVAILABLE_FOR_WORK: z
       .enum(["true", "false"])
       .transform((s) => s === "true")
-      .default("false"),
+      .pipe(z.boolean())
+      .default(false),
   },
   experimental__runtimeEnv: {},
   emptyStringAsUndefined: true,

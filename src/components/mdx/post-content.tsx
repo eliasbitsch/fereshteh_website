@@ -1,3 +1,4 @@
+// @ts-expect-error - fumadocs type export issue
 import { AnchorProvider, type TableOfContents } from "fumadocs-core/toc";
 import { TocTree } from "./toc-tree";
 

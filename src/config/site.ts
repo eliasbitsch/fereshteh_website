@@ -8,6 +8,7 @@ export const siteConfig = {
     "Fereshteh Hosseini, Fereshteh, Hosseini, HCI, Human-Computer Interaction, UX Designer, UI Designer, User Experience, User Interface, Portfolio, Resume, Digital Experiences, Technology, Interaction Design",
   links: {
     linkedin: "https://www.linkedin.com/in/fereshteh-hosseini/",
+    github: "https://github.com/eliasnau",
   },
   email: "fereshteh.hosseini.at@gmail.com",
   repositoryName: "website",

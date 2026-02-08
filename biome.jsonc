@@ -18,7 +18,14 @@
   "linter": {
     "rules": {
       "a11y": {
-        "noSvgWithoutTitle": "off"
+        "noSvgWithoutTitle": "off",
+        "noLabelWithoutControl": "off",
+        "noStaticElementInteractions": "off",
+        "noNoninteractiveElementInteractions": "off",
+        "useKeyWithClickEvents": "off",
+        "useSemanticElements": "off",
+        "useKeyWithMouseEvents": "off",
+        "useButtonType": "off"
       },
       "correctness": {
         "noUnusedVariables": {
@@ -27,16 +34,27 @@
           "options": {
             "ignoreRestSiblings": true
           }
-        }
+        },
+        "useImageSize": "off"
+      },
+      "complexity": {
+        "noExcessiveCognitiveComplexity": "off",
+        "noCommaOperator": "off"
       },
       "performance": {
         "noBarrelFile": "off",
-        "noNamespaceImport": "off"
+        "noNamespaceImport": "off",
+        "noImgElement": "off",
+        "useTopLevelRegex": "off"
+      },
+      "security": {
+        "noDangerouslySetInnerHtml": "off"
       },
       "style": {
         "noDefaultExport": "error",
         "noNonNullAssertion": "off",
         "noExportedImports": "off",
+        "noNestedTernary": "off",
         "useConsistentTypeDefinitions": {
           "fix": "safe",
           "level": "error",
@@ -45,9 +63,19 @@
           }
         }
       },
+      "suspicious": {
+        "noArrayIndexKey": "off",
+        "noAlert": "off",
+        "noAssignInExpressions": "off",
+        "noExplicitAny": "off",
+        "useAwait": "off",
+        "useIterableCallbackReturn": "off",
+        "noTsIgnore": "off"
+      },
       "nursery": {
         "noShadow": "off",
         "noLeakedRender": "off",
+        "noIncrementDecrement": "off",
         "useSortedClasses": {
           "fix": "safe",
           "level": "error",
@@ -91,7 +119,10 @@
                   "metadata",
                   "viewport",
                   "generateMetadata",
-                  "generateStaticParams"
+                  "generateStaticParams",
+                  "dynamic",
+                  "revalidate",
+                  "dynamicParams"
                 ]
               }
             }

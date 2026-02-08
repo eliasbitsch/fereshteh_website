@@ -34,7 +34,7 @@ export function PortfolioViewer({ item }: PortfolioViewerProps) {
   const scrollStartX = useRef(0);
   const scrollStartY = useRef(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const imageWrapperRef = useRef<HTMLDivElement>(null);
+  const _imageWrapperRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number | null>(null);
 
   const handleClose = () => {
@@ -53,7 +53,9 @@ export function PortfolioViewer({ item }: PortfolioViewerProps) {
   // Animated zoom with synchronized scroll
   const animateZoom = useCallback((oldZoom: number, newZoom: number) => {
     const container = scrollContainerRef.current;
-    if (!container || oldZoom === newZoom) return;
+    if (!container || oldZoom === newZoom) {
+      return;
+    }
 
     // Cancel any ongoing animation
     if (animationRef.current) {
@@ -144,7 +146,9 @@ export function PortfolioViewer({ item }: PortfolioViewerProps) {
   // Drag to pan (scroll) the image
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
-      if (zoom <= 1) return;
+      if (zoom <= 1) {
+        return;
+      }
       e.preventDefault();
       setIsDragging(true);
       dragStartX.current = e.clientX;
@@ -157,7 +161,9 @@ export function PortfolioViewer({ item }: PortfolioViewerProps) {
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
-      if (!(isDragging && scrollContainerRef.current)) return;
+      if (!(isDragging && scrollContainerRef.current)) {
+        return;
+      }
       const deltaX = dragStartX.current - e.clientX;
       const deltaY = dragStartY.current - e.clientY;
       scrollContainerRef.current.scrollLeft = scrollStartX.current + deltaX;
@@ -223,10 +229,10 @@ export function PortfolioViewer({ item }: PortfolioViewerProps) {
             <div className="flex shrink-0 items-center gap-1 sm:gap-2">
               {!isAtTop && (
                 <Button
+                  aria-label="Jump to top"
                   className="size-10 sm:size-11"
                   onPress={handleJumpToTop}
                   size="icon"
-                  title="Jump to top"
                   variant="outline"
                 >
                   <Icons.ArrowUp className="size-5" />
@@ -234,11 +240,11 @@ export function PortfolioViewer({ item }: PortfolioViewerProps) {
               )}
               <div className="flex h-10 items-center gap-1 rounded-lg border bg-bg p-1 sm:h-11 sm:gap-1.5 sm:p-1.5">
                 <Button
+                  aria-label="Zoom out"
                   className="size-8 sm:size-9"
                   isDisabled={zoom <= MIN_ZOOM}
                   onPress={handleZoomOut}
                   size="icon"
-                  title="Zoom out"
                   variant="ghost"
                 >
                   <Icons.Minus className="size-4 sm:size-5" />
@@ -247,21 +253,21 @@ export function PortfolioViewer({ item }: PortfolioViewerProps) {
                   {Math.round(zoom * 100)}%
                 </span>
                 <Button
+                  aria-label="Zoom in"
                   className="size-8 sm:size-9"
                   isDisabled={zoom >= MAX_ZOOM}
                   onPress={handleZoomIn}
                   size="icon"
-                  title="Zoom in"
                   variant="ghost"
                 >
                   <Icons.Plus className="size-4 sm:size-5" />
                 </Button>
                 <Button
+                  aria-label="Reset zoom"
                   className="size-8 sm:size-9"
                   isDisabled={zoom === 1}
                   onPress={handleResetZoom}
                   size="icon"
-                  title="Reset zoom"
                   variant="ghost"
                 >
                   <Icons.Maximize className="size-4 sm:size-5" />

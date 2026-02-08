@@ -16,7 +16,9 @@ export interface ProjectMetadata {
 
 export function getProjectsMetadata(): Record<string, ProjectMetadata> {
   try {
-    if (!fs.existsSync(METADATA_PATH)) return {};
+    if (!fs.existsSync(METADATA_PATH)) {
+      return {};
+    }
     const raw = fs.readFileSync(METADATA_PATH, "utf-8");
     return JSON.parse(raw || "{}");
   } catch (error) {

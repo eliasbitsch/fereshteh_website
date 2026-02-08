@@ -120,7 +120,7 @@ export function getProjectPdfItems(): ProjectPdfItem[] {
     const filenameVariations = getFilenameVariations(baseName, meta.title);
 
     // Try to find a matching JPG image (full-size)
-    let imagePath = withBasePath("/projects/" + pdfFile); // Fallback to PDF
+    let imagePath = withBasePath(`/projects/${pdfFile}`); // Fallback to PDF
 
     if (fs.existsSync(projectsJpgDir)) {
       const imageExtensions = [".jpg", ".jpeg", ".png", ".webp", ".avif"];
@@ -216,7 +216,9 @@ export function getProjectPdfItems(): ProjectPdfItem[] {
     }
 
     // Add any remaining items not in the order list
-    itemMap.forEach((item) => orderedItems.push(item));
+    for (const item of itemMap.values()) {
+      orderedItems.push(item);
+    }
 
     return orderedItems;
   }

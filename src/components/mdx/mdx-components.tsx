@@ -76,7 +76,6 @@ export const mdxComponents = {
     height,
     ...props
   }: React.ComponentProps<"img">) => (
-    // biome-ignore lint/performance/noImgElement: For MDX compatibility
     <img
       {...props}
       alt={alt}
@@ -134,5 +133,4 @@ export const mdxComponents = {
   DisplayAge,
 } satisfies Record<string, React.FunctionComponent<SAFE_ANY>>;
 
-// biome-ignore lint/suspicious/noExplicitAny: This is a type alias for any
 type SAFE_ANY = any;

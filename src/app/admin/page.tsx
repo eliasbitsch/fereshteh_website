@@ -627,7 +627,7 @@ export default function AdminPage() {
   const [editingSkillIndex, setEditingSkillIndex] = useState<number | null>(
     null
   );
-  const [uploadingSkillIcon, setUploadingSkillIcon] = useState(false);
+  const [_uploadingSkillIcon, setUploadingSkillIcon] = useState(false);
   const skillIconInputRef = useRef<HTMLInputElement | null>(null);
   const [iconSearchQuery, setIconSearchQuery] = useState("");
 
@@ -641,7 +641,9 @@ export default function AdminPage() {
         icon.name.toLowerCase() === lowerName ||
         icon.key.toLowerCase() === lowerName
     );
-    if (exactMatch) return exactMatch.key;
+    if (exactMatch) {
+      return exactMatch.key;
+    }
 
     // Then, try keyword match
     const keywordMatch = availableIcons.find((icon) =>
@@ -649,7 +651,9 @@ export default function AdminPage() {
         (keyword) => keyword === lowerName || lowerName.includes(keyword)
       )
     );
-    if (keywordMatch) return keywordMatch.key;
+    if (keywordMatch) {
+      return keywordMatch.key;
+    }
 
     // Finally, try partial name match
     const partialMatch = availableIcons.find(
@@ -657,7 +661,9 @@ export default function AdminPage() {
         icon.name.toLowerCase().includes(lowerName) ||
         lowerName.includes(icon.name.toLowerCase())
     );
-    if (partialMatch) return partialMatch.key;
+    if (partialMatch) {
+      return partialMatch.key;
+    }
 
     return "";
   };
@@ -668,7 +674,9 @@ export default function AdminPage() {
     input.accept = ".png,.jpg,.jpeg,.webp,.avif";
     input.onchange = async () => {
       const file = input.files?.[0];
-      if (!file) return;
+      if (!file) {
+        return;
+      }
 
       // Create preview URL
       const url = URL.createObjectURL(file);
@@ -680,7 +688,9 @@ export default function AdminPage() {
   };
 
   const uploadThumbnail = async () => {
-    if (!thumbnailPreview) return;
+    if (!thumbnailPreview) {
+      return;
+    }
 
     setUploadingThumbnail(true);
     setMessage(null);
@@ -787,14 +797,7 @@ export default function AdminPage() {
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [hasUnsavedChanges]);
 
-  useEffect(() => {
-    if (activeTab === "projects") {
-      loadProjectPdfs();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab]);
-
-  const loadProjectPdfs = async () => {
+  const loadProjectPdfs = useCallback(async () => {
     try {
       const res = await fetch("/api/content/projects/pdfs");
       if (res.ok) {
@@ -807,15 +810,23 @@ export default function AdminPage() {
     } catch (error) {
       console.error("Failed to load project PDFs:", error);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (activeTab === "projects") {
+      loadProjectPdfs();
+    }
+  }, [activeTab, loadProjectPdfs]);
 
   const handleLogout = async () => {
-    await fetch("/api/auth/logout", { method: "POST" });
+    await fetch("/api/admin/logout", { method: "POST" });
     router.push("/admin/login");
   };
 
   const saveAllContent = async () => {
-    if (!content) return;
+    if (!content) {
+      return;
+    }
 
     setSaving(true);
     setMessage(null);
@@ -886,7 +897,9 @@ export default function AdminPage() {
   };
 
   const deleteExperience = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this experience?")) return;
+    if (!confirm("Are you sure you want to delete this experience?")) {
+      return;
+    }
 
     setSaving(true);
     try {
@@ -1055,7 +1068,9 @@ export default function AdminPage() {
                     className="hidden"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
-                      if (!file) return;
+                      if (!file) {
+                        return;
+                      }
                       setSelectedProfileFile(file);
                       try {
                         const url = URL.createObjectURL(file);
@@ -1064,7 +1079,9 @@ export default function AdminPage() {
                         setProfilePreviewUrl(null);
                       }
                     }}
-                    ref={(el) => (profileInputRef.current = el)}
+                    ref={(el) => {
+                      profileInputRef.current = el;
+                    }}
                     type="file"
                   />
 
@@ -1081,7 +1098,9 @@ export default function AdminPage() {
                         !selectedProfileFile || uploadingProfilePicture
                       }
                       onPress={async () => {
-                        if (!selectedProfileFile) return;
+                        if (!selectedProfileFile) {
+                          return;
+                        }
                         setUploadingProfilePicture(true);
                         setMessage(null);
 
@@ -1145,10 +1164,14 @@ export default function AdminPage() {
                   className="hidden"
                   onChange={(e) => {
                     const file = e.target.files?.[0];
-                    if (!file) return;
+                    if (!file) {
+                      return;
+                    }
                     setSelectedCvFile(file);
                   }}
-                  ref={(el) => (cvInputRef.current = el)}
+                  ref={(el) => {
+                    cvInputRef.current = el;
+                  }}
                   type="file"
                 />
 
@@ -1163,7 +1186,9 @@ export default function AdminPage() {
                   <Button
                     isDisabled={!selectedCvFile || uploadingCv}
                     onPress={async () => {
-                      if (!selectedCvFile) return;
+                      if (!selectedCvFile) {
+                        return;
+                      }
                       setUploadingCv(true);
                       setMessage(null);
 
@@ -1589,7 +1614,9 @@ export default function AdminPage() {
                         {availableIcons
                           .filter((icon) => {
                             const query = iconSearchQuery.toLowerCase();
-                            if (!query) return true;
+                            if (!query) {
+                              return true;
+                            }
                             return (
                               icon.name.toLowerCase().includes(query) ||
                               icon.keywords.some((k) => k.includes(query))
@@ -1620,7 +1647,9 @@ export default function AdminPage() {
                       </div>
                       {availableIcons.filter((icon) => {
                         const query = iconSearchQuery.toLowerCase();
-                        if (!query) return true;
+                        if (!query) {
+                          return true;
+                        }
                         return (
                           icon.name.toLowerCase().includes(query) ||
                           icon.keywords.some((k) => k.includes(query))
@@ -1637,7 +1666,9 @@ export default function AdminPage() {
                       className="hidden"
                       onChange={async (e) => {
                         const file = e.target.files?.[0];
-                        if (!(file && editingSkill.name)) return;
+                        if (!(file && editingSkill.name)) {
+                          return;
+                        }
 
                         setUploadingSkillIcon(true);
                         try {
@@ -1687,7 +1718,9 @@ export default function AdminPage() {
                     <Button
                       isDisabled={!editingSkill.name}
                       onPress={() => {
-                        if (!editingSkill.name) return;
+                        if (!editingSkill.name) {
+                          return;
+                        }
                         const skills = [...(content.skills || [])];
 
                         if (
@@ -1742,8 +1775,9 @@ export default function AdminPage() {
                       if (
                         draggedSkillIndex === null ||
                         draggedSkillIndex === index
-                      )
+                      ) {
                         return;
+                      }
 
                       const skills = [...(content.skills || [])];
                       const [movedSkill] = skills.splice(draggedSkillIndex, 1);
@@ -2029,7 +2063,9 @@ export default function AdminPage() {
                   multiple
                   onChange={async (e) => {
                     const files = Array.from(e.target.files || []);
-                    if (files.length === 0) return;
+                    if (files.length === 0) {
+                      return;
+                    }
 
                     setUploadingPdf(true);
                     setMessage(null);
@@ -2121,8 +2157,12 @@ export default function AdminPage() {
                     onDragStart={() => setDraggedPdfIndex(index)}
                     onDrop={async (e) => {
                       e.preventDefault();
-                      if (draggedPdfIndex === null || draggedPdfIndex === index)
+                      if (
+                        draggedPdfIndex === null ||
+                        draggedPdfIndex === index
+                      ) {
                         return;
+                      }
 
                       const currentOrder =
                         projectPdfsOrder.length > 0
@@ -2206,7 +2246,6 @@ export default function AdminPage() {
                           className="px-4 py-2.5"
                           isDisabled={uploadingThumbnail}
                           onPress={() => openThumbnailPicker(item.title)}
-                          size="md"
                           variant="outline"
                         >
                           <Icons.Image className="mr-2 size-4" />
@@ -2219,8 +2258,7 @@ export default function AdminPage() {
                             // derive key from pdf filename
                             try {
                               const parts = (item.pdfPath || "").split("/");
-                              const file =
-                                parts[parts.length - 1] || item.title;
+                              const file = parts.at(-1) || item.title;
                               const key = file.replace(/\.pdf$/i, "");
                               setEditingPdf({
                                 key,
@@ -2237,7 +2275,6 @@ export default function AdminPage() {
                               });
                             }
                           }}
-                          size="md"
                           variant="outline"
                         >
                           <Icons.Edit className="mr-2 size-4" />
@@ -2247,7 +2284,9 @@ export default function AdminPage() {
                         <Button
                           className="px-4 py-2.5"
                           onPress={async () => {
-                            if (!confirm(`Delete "${item.title}"?`)) return;
+                            if (!confirm(`Delete "${item.title}"?`)) {
+                              return;
+                            }
 
                             try {
                               const res = await fetch(
@@ -2277,7 +2316,6 @@ export default function AdminPage() {
                               });
                             }
                           }}
-                          size="md"
                           variant="outline"
                         >
                           <Icons.Trash className="size-4" />
@@ -2326,7 +2364,9 @@ export default function AdminPage() {
                   <Button
                     isDisabled={saving}
                     onPress={async () => {
-                      if (!editingPdf) return;
+                      if (!editingPdf) {
+                        return;
+                      }
                       setSaving(true);
                       setMessage(null);
                       try {

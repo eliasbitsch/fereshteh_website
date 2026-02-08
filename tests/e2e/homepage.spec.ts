@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+const FERESHTEH_NAME_REGEX = /Fereshteh/i;
+
 test.describe("Homepage", () => {
   test("should load successfully", async ({ page }) => {
     await page.goto("/");
@@ -15,7 +17,7 @@ test.describe("Homepage", () => {
     await page.goto("/");
 
     // Check for name/title
-    await expect(page.getByText(/Fereshteh/i)).toBeVisible();
+    await expect(page.getByText(FERESHTEH_NAME_REGEX)).toBeVisible();
   });
 
   test("should have navigation", async ({ page }) => {

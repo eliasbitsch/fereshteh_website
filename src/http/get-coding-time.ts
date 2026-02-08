@@ -3,6 +3,9 @@ import { api } from "~/lib/fetch";
 
 export async function getCodingTime() {
   try {
+    if (!env.WAKATIME_API_KEY) {
+      return null;
+    }
     const API_KEY = Buffer.from(env.WAKATIME_API_KEY).toString("base64");
 
     const { data, error } = await api(

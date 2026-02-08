@@ -92,7 +92,9 @@ export function RichTextEditor({
           className="h-8 w-8 p-0"
           onPress={() => {
             const url = prompt("Enter URL:");
-            if (url) execCommand("createLink", url);
+            if (url) {
+              execCommand("createLink", url);
+            }
           }}
           size="sm"
           type="button"

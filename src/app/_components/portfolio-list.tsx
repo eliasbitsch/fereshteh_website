@@ -33,7 +33,7 @@ export function PortfolioListSkeleton() {
       {Array.from({ length: 4 }).map((_, i) => (
         <div
           className="flex flex-col overflow-hidden rounded-xl border bg-card"
-          key={i}
+          key={`skeleton-${i}`}
         >
           <div className="aspect-[16/9] w-full animate-pulse bg-muted" />
           <div className="p-4">

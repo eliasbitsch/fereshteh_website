@@ -13,7 +13,9 @@ export const revalidate = 30;
 async function checkAuth(): Promise<boolean> {
   const cookieStore = await cookies();
   const token = cookieStore.get("admin_session")?.value;
-  if (!token) return false;
+  if (!token) {
+    return false;
+  }
   return validateSession(token) !== null;
 }
 

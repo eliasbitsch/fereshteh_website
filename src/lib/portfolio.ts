@@ -112,7 +112,9 @@ export function getPortfolioItems(): PortfolioItem[] {
     }
 
     // Add any remaining items not in the order list
-    itemMap.forEach((item) => orderedItems.push(item));
+    for (const item of itemMap.values()) {
+      orderedItems.push(item);
+    }
 
     return orderedItems;
   }

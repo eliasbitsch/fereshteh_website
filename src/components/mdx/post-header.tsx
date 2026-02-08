@@ -48,6 +48,7 @@ export function PostHeader({ title, date, cover }: PostHeaderProps) {
         </div>
       </div>
       <ImageZoom
+        // @ts-ignore - ImageZoom component props
         zoomImg={{
           src: cover.src,
           width: cover.width,

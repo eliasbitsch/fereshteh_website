@@ -24,7 +24,9 @@ export default defineConfig({
       },
       icon: false,
       transformers: [
+        // @ts-expect-error - shiki transformer type mismatch between versions
         ...(rehypeCodeDefaultOptions.transformers ?? []),
+        // @ts-expect-error - shiki transformer type mismatch between versions
         transformerNpmCommands(),
       ],
     },

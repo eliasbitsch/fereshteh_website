@@ -3,10 +3,16 @@
 import dynamic from "next/dynamic";
 import { PortfolioListSkeleton } from "./portfolio-list";
 
-const PortfolioList = dynamic(() => import("./portfolio-list-client"), {
-  ssr: false,
-  loading: () => <PortfolioListSkeleton />,
-});
+const PortfolioList = dynamic(
+  () =>
+    import("./portfolio-list-client").then((mod) => ({
+      default: mod.PortfolioListClient,
+    })),
+  {
+    ssr: false,
+    loading: () => <PortfolioListSkeleton />,
+  }
+);
 
 interface PortfolioItem {
   title: string;

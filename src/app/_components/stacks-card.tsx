@@ -36,7 +36,7 @@ export function StacksCard({ skills = [] }: StacksCardProps) {
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                {hasCustomIcon ? (
+                {hasCustomIcon && (
                   <Image
                     alt={skill.name}
                     className="size-10"
@@ -44,9 +44,11 @@ export function StacksCard({ skills = [] }: StacksCardProps) {
                     src={withBasePath(skill.customIcon!)}
                     width={40}
                   />
-                ) : BuiltInIcon ? (
+                )}
+                {!hasCustomIcon && BuiltInIcon && (
                   <BuiltInIcon className="size-10" />
-                ) : (
+                )}
+                {!(hasCustomIcon || BuiltInIcon) && (
                   <span className="flex size-10 items-center justify-center rounded bg-secondary font-medium text-xs">
                     {skill.name.slice(0, 2)}
                   </span>

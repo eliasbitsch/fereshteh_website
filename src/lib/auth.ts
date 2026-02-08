@@ -1,6 +1,6 @@
-import { createHash, randomBytes } from "crypto";
-import { existsSync, readFileSync, writeFileSync } from "fs";
-import { join } from "path";
+import { createHash, randomBytes } from "node:crypto";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 
 const ADMINS_FILE = join(process.cwd(), "src/content/data/admins.json");
 const SESSIONS_FILE = join(process.cwd(), "src/content/data/sessions.json");
@@ -69,7 +69,7 @@ export function validateCredentials(email: string, password: string): boolean {
     (a) => a.email.toLowerCase() === email.toLowerCase()
   );
 
-  if (!(admin && admin.passwordHash)) {
+  if (!admin?.passwordHash) {
     return false;
   }
 
@@ -150,7 +150,7 @@ export function validateResetToken(token: string): string | null {
   const admins = getAdmins();
   const admin = admins.admins.find((a) => a.resetToken === token);
 
-  if (!(admin && admin.resetTokenExpiry)) {
+  if (!admin?.resetTokenExpiry) {
     return null;
   }
 

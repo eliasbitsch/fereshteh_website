@@ -114,7 +114,10 @@ describe("/api/content/projects/upload", () => {
     expect(json).toEqual({ error: "Only PDF files are allowed" });
   });
 
+  // biome-ignore lint/suspicious/noSkippedTests: Covered by E2E tests - vitest/bun mocking limitation
   it.skip("should successfully upload a PDF file", async () => {
+    // Skipped: vitest/bun has issues mocking destructured imports from node:fs
+    // This functionality is covered by E2E tests (tests/e2e/upload.spec.ts)
     // Skipped: vitest/bun has issues mocking destructured imports from node:fs
     // This functionality is covered by E2E tests (tests/e2e/upload.spec.ts)
     mockValidateSession.mockReturnValue({ userId: "test-user" });

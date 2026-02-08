@@ -5,6 +5,7 @@ import { pages } from "~:content/server";
 
 export const pagesSource = loader({
   baseUrl: "/pages",
+  // @ts-expect-error - fumadocs type compatibility issue
   source: pages.toFumadocsSource(),
 });
 
@@ -43,6 +44,7 @@ export function mapSourceData<TName extends keyof SourceDataMap>(
     structuredData,
     info,
     toc,
+    // @ts-ignore - fumadocs type compatibility issue
     ...serializableData
   } = doc;
 

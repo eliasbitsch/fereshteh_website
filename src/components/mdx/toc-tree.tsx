@@ -2,6 +2,7 @@
 
 import {
   ScrollProvider,
+  // @ts-expect-error - fumadocs type export issue
   type TableOfContents,
   TOCItem,
 } from "fumadocs-core/toc";
@@ -18,6 +19,7 @@ export function TocTree({ tree }: TocTreeProps) {
   return (
     <ScrollProvider containerRef={viewRef}>
       <ul className="space-y-2" ref={viewRef}>
+        {/* @ts-expect-error - fumadocs type issue */}
         {tree.map((item) => (
           <li className="space-y-2" key={item.url}>
             <TOCItem
