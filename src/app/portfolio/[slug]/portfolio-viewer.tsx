@@ -20,7 +20,7 @@ interface PortfolioViewerProps {
 const MIN_ZOOM = 0.5;
 const MAX_ZOOM = 3;
 const ZOOM_STEP = 0.25;
-const BASE_WIDTH = 896; // max-w-4xl in pixels
+const BASE_WIDTH = 640; // Smaller default width, better for mobile
 const ZOOM_ANIMATION_MS = 200;
 
 export function PortfolioViewer({ item }: PortfolioViewerProps) {
@@ -223,57 +223,57 @@ export function PortfolioViewer({ item }: PortfolioViewerProps) {
             <div className="flex shrink-0 items-center gap-1 sm:gap-2">
               {!isAtTop && (
                 <Button
-                  className="size-8 sm:size-10"
+                  className="size-10 sm:size-11"
                   onPress={handleJumpToTop}
                   size="icon"
                   title="Jump to top"
                   variant="outline"
                 >
-                  <Icons.ArrowUp className="size-4" />
+                  <Icons.ArrowUp className="size-5" />
                 </Button>
               )}
-              <div className="flex h-8 items-center gap-0.5 rounded-lg border bg-bg p-0.5 sm:h-10 sm:gap-1 sm:p-1">
+              <div className="flex h-10 items-center gap-1 rounded-lg border bg-bg p-1 sm:h-11 sm:gap-1.5 sm:p-1.5">
                 <Button
-                  className="size-7 sm:size-8"
+                  className="size-8 sm:size-9"
                   isDisabled={zoom <= MIN_ZOOM}
                   onPress={handleZoomOut}
                   size="icon"
                   title="Zoom out"
                   variant="ghost"
                 >
-                  <Icons.Minus className="size-3 sm:size-4" />
+                  <Icons.Minus className="size-4 sm:size-5" />
                 </Button>
-                <span className="min-w-[2.5rem] text-center text-xs sm:min-w-[3rem] sm:text-sm">
+                <span className="min-w-[3rem] text-center text-xs sm:min-w-[3.5rem] sm:text-sm">
                   {Math.round(zoom * 100)}%
                 </span>
                 <Button
-                  className="size-7 sm:size-8"
+                  className="size-8 sm:size-9"
                   isDisabled={zoom >= MAX_ZOOM}
                   onPress={handleZoomIn}
                   size="icon"
                   title="Zoom in"
                   variant="ghost"
                 >
-                  <Icons.Plus className="size-3 sm:size-4" />
+                  <Icons.Plus className="size-4 sm:size-5" />
                 </Button>
                 <Button
-                  className="size-7 sm:size-8"
+                  className="size-8 sm:size-9"
                   isDisabled={zoom === 1}
                   onPress={handleResetZoom}
                   size="icon"
                   title="Reset zoom"
                   variant="ghost"
                 >
-                  <Icons.Maximize className="size-3 sm:size-4" />
+                  <Icons.Maximize className="size-4 sm:size-5" />
                 </Button>
               </div>
               <Button
-                className="h-8 sm:h-10"
+                className="h-10 sm:h-11"
                 onClick={handleDownload}
                 size="sm"
                 variant="outline"
               >
-                <Icons.Download className="size-4 sm:mr-2" />
+                <Icons.Download className="size-5 sm:mr-2" />
                 <span className="hidden sm:inline">Download PDF</span>
               </Button>
             </div>
