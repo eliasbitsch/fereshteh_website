@@ -2,9 +2,9 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { validateSession } from "~/lib/auth";
 import {
+  deleteProjectPdf,
   getProjectPdfItems,
   saveProjectsOrder,
-  deleteProjectPdf,
 } from "~/lib/projects-pdf";
 
 // Cache for 30 seconds - balances performance with CMS freshness
@@ -39,7 +39,7 @@ export async function PUT(request: Request) {
     const body = await request.json();
     const { order } = body as { order: string[] };
 
-    if (!order || !Array.isArray(order)) {
+    if (!(order && Array.isArray(order))) {
       return NextResponse.json(
         { error: "Order array is required" },
         { status: 400 }
@@ -69,10 +69,7 @@ export async function DELETE(request: Request) {
     const { title } = body as { title: string };
 
     if (!title) {
-      return NextResponse.json(
-        { error: "Title is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Title is required" }, { status: 400 });
     }
 
     deleteProjectPdf(title);

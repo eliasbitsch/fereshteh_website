@@ -70,7 +70,11 @@ export function getPortfolioItems(): PortfolioItem[] {
     }
 
     // Try to find full-size WebP image
-    const portfolioImagesDir = path.join(process.cwd(), "public", "portfolio-images");
+    const portfolioImagesDir = path.join(
+      process.cwd(),
+      "public",
+      "portfolio-images"
+    );
     let imagePath = thumbnailPath; // Fallback to thumbnail
 
     if (fs.existsSync(portfolioImagesDir)) {
@@ -93,11 +97,11 @@ export function getPortfolioItems(): PortfolioItem[] {
 
   // Apply custom order if available
   const customOrder = getPortfolioOrder();
-  
+
   if (customOrder.length > 0) {
     const itemMap = new Map(items.map((item) => [item.title, item]));
     const orderedItems: PortfolioItem[] = [];
-    
+
     // Add items in custom order
     for (const title of customOrder) {
       const item = itemMap.get(title);
@@ -106,10 +110,10 @@ export function getPortfolioItems(): PortfolioItem[] {
         itemMap.delete(title);
       }
     }
-    
+
     // Add any remaining items not in the order list
     itemMap.forEach((item) => orderedItems.push(item));
-    
+
     return orderedItems;
   }
 

@@ -6,10 +6,7 @@ export async function POST(request: Request) {
     const { email } = await request.json();
 
     if (!email) {
-      return NextResponse.json(
-        { error: "Email is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Email is required" }, { status: 400 });
     }
 
     // Always return success to prevent email enumeration
@@ -35,9 +32,6 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("Forgot password error:", error);
-    return NextResponse.json(
-      { error: "An error occurred" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "An error occurred" }, { status: 500 });
   }
 }

@@ -1,8 +1,8 @@
+import { existsSync } from "node:fs";
+import { unlink, writeFile } from "node:fs/promises";
+import { join } from "node:path";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { writeFile, unlink } from "node:fs/promises";
-import { existsSync } from "node:fs";
-import { join } from "node:path";
 import { validateSession } from "~/lib/auth";
 
 async function checkAuth(): Promise<boolean> {
@@ -26,7 +26,10 @@ export async function POST(request: Request) {
     }
 
     if (!file.name.toLowerCase().endsWith(".pdf")) {
-      return NextResponse.json({ error: "Only PDF files are allowed" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Only PDF files are allowed" },
+        { status: 400 }
+      );
     }
 
     const documentsDir = join(process.cwd(), "public", "documents");
@@ -51,9 +54,6 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("CV upload error:", error);
-    return NextResponse.json(
-      { error: "Failed to upload CV" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to upload CV" }, { status: 500 });
   }
 }

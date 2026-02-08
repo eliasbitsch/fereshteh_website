@@ -1,8 +1,8 @@
+import { existsSync } from "node:fs";
+import { mkdir, writeFile } from "node:fs/promises";
+import { extname, join } from "node:path";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { writeFile, mkdir } from "node:fs/promises";
-import { existsSync } from "node:fs";
-import { join, extname } from "node:path";
 import { validateSession } from "~/lib/auth";
 
 async function checkAuth(): Promise<boolean> {
@@ -32,7 +32,10 @@ export async function POST(request: Request) {
 
     const ext = extname(file.name).toLowerCase();
     if (ext !== ".svg") {
-      return NextResponse.json({ error: "Only SVG files are allowed" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Only SVG files are allowed" },
+        { status: 400 }
+      );
     }
 
     const iconsDir = join(process.cwd(), "public", "icons");
@@ -53,10 +56,13 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      iconPath: `/icons/${filename}`
+      iconPath: `/icons/${filename}`,
     });
   } catch (error) {
     console.error("Icon upload error:", error);
-    return NextResponse.json({ error: "Failed to upload icon" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to upload icon" },
+      { status: 500 }
+    );
   }
 }

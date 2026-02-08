@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { validateSession } from "~/lib/auth";
-import { getContent, saveContent, type ContentData } from "~/lib/content";
+import { type ContentData, getContent, saveContent } from "~/lib/content";
 
 async function checkAuth(): Promise<boolean> {
   const cookieStore = await cookies();

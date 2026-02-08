@@ -72,11 +72,7 @@ export function PDFViewerIframe({
         className="flex-1 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        <iframe
-          className="size-full"
-          src={pdfUrl}
-          title={title}
-        />
+        <iframe className="size-full" src={pdfUrl} title={title} />
       </div>
     </div>
   );

@@ -1,8 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
-import { withBasePath } from "./get-base-path";
-
 import { getProjectsMetadata } from "~/lib/projects-metadata";
+import { withBasePath } from "./get-base-path";
 
 export interface ProjectPdfItem {
   title: string;
@@ -41,7 +40,10 @@ function getFilenameVariations(
   variations.add(normalizeProjectFilename(baseName));
 
   // Remove trailing numbers (e.g., "project-1" -> "project")
-  const withoutNumbers = normalizeProjectFilename(baseName).replace(/-\d+$/, "");
+  const withoutNumbers = normalizeProjectFilename(baseName).replace(
+    /-\d+$/,
+    ""
+  );
   if (withoutNumbers) {
     variations.add(withoutNumbers);
   }
@@ -88,7 +90,11 @@ export function saveProjectsOrder(order: string[]): void {
 export function getProjectPdfItems(): ProjectPdfItem[] {
   const projectsDir = path.join(process.cwd(), "public", "projects");
   const projectsJpgDir = path.join(process.cwd(), "public", "projects-jpg");
-  const thumbnailsDir = path.join(process.cwd(), "public", "projects-thumbnails");
+  const thumbnailsDir = path.join(
+    process.cwd(),
+    "public",
+    "projects-thumbnails"
+  );
 
   // Check if directories exist
   if (!fs.existsSync(projectsDir)) {
@@ -107,7 +113,8 @@ export function getProjectPdfItems(): ProjectPdfItem[] {
     const title = baseName;
 
     // Get metadata first
-    const meta = metadata[baseName] || metadata[normalizeProjectFilename(baseName)] || {};
+    const meta =
+      metadata[baseName] || metadata[normalizeProjectFilename(baseName)] || {};
 
     // Generate all possible filename variations using the utility function
     const filenameVariations = getFilenameVariations(baseName, meta.title);
@@ -143,8 +150,12 @@ export function getProjectPdfItems(): ProjectPdfItem[] {
           const thumbnailFullPath = path.join(thumbnailsDir, thumbnailFile);
 
           if (fs.existsSync(thumbnailFullPath)) {
-            thumbnailPath = withBasePath(`/projects-thumbnails/${thumbnailFile}`);
-            console.log(`[Projects PDF] Found custom thumbnail: ${thumbnailFile} for project "${baseName}"`);
+            thumbnailPath = withBasePath(
+              `/projects-thumbnails/${thumbnailFile}`
+            );
+            console.log(
+              `[Projects PDF] Found custom thumbnail: ${thumbnailFile} for project "${baseName}"`
+            );
             break outer;
           }
         }
@@ -153,16 +164,25 @@ export function getProjectPdfItems(): ProjectPdfItem[] {
 
     // Also check legacy thumbnails directory if no custom thumbnail found
     if (thumbnailPath === imagePath) {
-      const legacyThumbnailsDir = path.join(process.cwd(), "public", "thumbnails");
+      const legacyThumbnailsDir = path.join(
+        process.cwd(),
+        "public",
+        "thumbnails"
+      );
       if (fs.existsSync(legacyThumbnailsDir)) {
         outer: for (const variation of filenameVariations) {
           for (const ext of thumbnailExtensions) {
             const thumbnailFile = `${variation}${ext}`;
-            const thumbnailFullPath = path.join(legacyThumbnailsDir, thumbnailFile);
+            const thumbnailFullPath = path.join(
+              legacyThumbnailsDir,
+              thumbnailFile
+            );
 
             if (fs.existsSync(thumbnailFullPath)) {
               thumbnailPath = withBasePath(`/thumbnails/${thumbnailFile}`);
-              console.log(`[Projects PDF] Found legacy thumbnail: ${thumbnailFile} for project "${baseName}"`);
+              console.log(
+                `[Projects PDF] Found legacy thumbnail: ${thumbnailFile} for project "${baseName}"`
+              );
               break outer;
             }
           }
@@ -207,7 +227,11 @@ export function getProjectPdfItems(): ProjectPdfItem[] {
 export function deleteProjectPdf(title: string): void {
   const projectsDir = path.join(process.cwd(), "public", "projects");
   const projectsJpgDir = path.join(process.cwd(), "public", "projects-jpg");
-  const thumbnailsDir = path.join(process.cwd(), "public", "projects-thumbnails");
+  const thumbnailsDir = path.join(
+    process.cwd(),
+    "public",
+    "projects-thumbnails"
+  );
 
   // Delete PDF
   const pdfPath = path.join(projectsDir, `${title}.pdf`);

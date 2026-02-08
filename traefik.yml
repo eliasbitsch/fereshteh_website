@@ -17,6 +17,11 @@ entryPoints:
     http:
       tls:
         certResolver: letsencrypt
+    # Allow larger request bodies for file uploads
+    transport:
+      respondingTimeouts:
+        readTimeout: 60s
+        writeTimeout: 60s
 
 certificatesResolvers:
   letsencrypt:

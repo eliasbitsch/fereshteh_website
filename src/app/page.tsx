@@ -1,16 +1,16 @@
+import {
+  getAboutContent,
+  getExperiences,
+  getHeroContent,
+  getLocationContent,
+  getSectionsContent,
+  getSkills,
+} from "~/lib/content-loader";
 import { getProjectPdfItems } from "~/lib/projects-pdf";
 import { AboutSection } from "./_components/about-me";
 import { ExperienceSection } from "./_components/experience-section";
 import { HeroSection } from "./_components/hero-section";
 import { PortfolioSection } from "./_components/portfolio-section";
-import {
-  getHeroContent,
-  getAboutContent,
-  getExperiences,
-  getSectionsContent,
-  getLocationContent,
-  getSkills,
-} from "~/lib/content-loader";
 
 // Disable caching - always fetch fresh content
 export const dynamic = "force-dynamic";
@@ -27,25 +27,30 @@ export default function Home() {
   return (
     <main className="space-y-20">
       <HeroSection
-        name={heroContent.name}
-        bio={heroContent.bio}
         availableForWork={heroContent.availableForWork}
-        showResumeButton={heroContent.showResumeButton}
+        bio={heroContent.bio}
+        name={heroContent.name}
         profilePictureVersion={heroContent.profilePictureVersion}
+        showResumeButton={heroContent.showResumeButton}
       />
-      <section id="portfolio" className="container scroll-mt-24 max-w-6xl">
-        <h2 className="mb-10 font-semibold text-2xl md:text-3xl">{sectionsContent?.portfolioTitle || "Portfolio"}</h2>
+      <section className="container max-w-6xl scroll-mt-24" id="portfolio">
+        <h2 className="mb-10 font-semibold text-2xl md:text-3xl">
+          {sectionsContent?.portfolioTitle || "Portfolio"}
+        </h2>
         <PortfolioSection items={projectItems} />
       </section>
-      <div id="experience" className="scroll-mt-24">
-        <ExperienceSection experiences={experiences} title={sectionsContent?.experienceTitle} />
+      <div className="scroll-mt-24" id="experience">
+        <ExperienceSection
+          experiences={experiences}
+          title={sectionsContent?.experienceTitle}
+        />
       </div>
-      <div id="about" className="scroll-mt-24">
+      <div className="scroll-mt-24" id="about">
         <AboutSection
-          title={aboutContent.title}
           description={aboutContent.description}
           location={locationContent}
           skills={skills}
+          title={aboutContent.title}
         />
       </div>
     </main>

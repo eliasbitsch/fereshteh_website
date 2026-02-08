@@ -1,7 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
 
-const METADATA_PATH = path.join(process.cwd(), "src", "content", "data", "projects-metadata.json");
+const METADATA_PATH = path.join(
+  process.cwd(),
+  "src",
+  "content",
+  "data",
+  "projects-metadata.json"
+);
 
 export interface ProjectMetadata {
   title?: string;
@@ -32,7 +38,11 @@ export function setProjectMetadata(key: string, meta: ProjectMetadata) {
 
 export function saveProjectsMetadata(data: Record<string, ProjectMetadata>) {
   try {
-    fs.writeFileSync(METADATA_PATH, JSON.stringify(data || {}, null, 2), "utf-8");
+    fs.writeFileSync(
+      METADATA_PATH,
+      JSON.stringify(data || {}, null, 2),
+      "utf-8"
+    );
   } catch (error) {
     console.error("Failed to write projects metadata:", error);
     throw error;

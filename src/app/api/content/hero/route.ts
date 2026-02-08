@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { validateSession } from "~/lib/auth";
-import { updateHero, type HeroContent } from "~/lib/content";
+import { type HeroContent, updateHero } from "~/lib/content";
 
 async function checkAuth(): Promise<boolean> {
   const cookieStore = await cookies();

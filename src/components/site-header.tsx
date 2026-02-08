@@ -1,8 +1,6 @@
-import { siteConfig } from "~/config/site";
 import { MainNav } from "./main-nav";
 import { MobileNav } from "./mobile-nav";
 import { ModeSwitcher } from "./mode-switcher";
-import { Icons } from "./ui/icons";
 
 export function SiteHeader() {
   return (

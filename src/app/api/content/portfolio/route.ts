@@ -1,7 +1,7 @@
+import { existsSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { readFileSync, writeFileSync, existsSync, unlinkSync } from "node:fs";
-import { join } from "node:path";
 import { validateSession } from "~/lib/auth";
 import { getPortfolioItems } from "~/lib/portfolio";
 
@@ -96,10 +96,7 @@ export async function DELETE(request: Request) {
     const { title } = body as { title: string };
 
     if (!title) {
-      return NextResponse.json(
-        { error: "Title is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Title is required" }, { status: 400 });
     }
 
     const portfolioDir = join(process.cwd(), "public", "portfolio");

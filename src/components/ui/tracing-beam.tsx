@@ -26,13 +26,10 @@ export function TracingBeam({ children, className, offset }: TracingBeamProps) {
     }
   }, []);
 
-  const y1 = useSpring(
-    useTransform(scrollYProgress, [0, 1], [0, svgHeight]),
-    {
-      stiffness: 300,
-      damping: 90,
-    }
-  );
+  const y1 = useSpring(useTransform(scrollYProgress, [0, 1], [0, svgHeight]), {
+    stiffness: 300,
+    damping: 90,
+  });
   const y2 = useSpring(
     useTransform(scrollYProgress, [0, 1], [0, svgHeight - 200]),
     {

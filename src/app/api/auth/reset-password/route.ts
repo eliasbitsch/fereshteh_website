@@ -2,16 +2,16 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import {
   createSession,
+  isValidEmail,
   resetPasswordWithToken,
   validateResetToken,
-  isValidEmail,
 } from "~/lib/auth";
 
 export async function POST(request: Request) {
   try {
     const { token, password, confirmPassword } = await request.json();
 
-    if (!token || !password || !confirmPassword) {
+    if (!(token && password && confirmPassword)) {
       return NextResponse.json(
         { error: "All fields are required" },
         { status: 400 }
@@ -72,9 +72,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true, email });
   } catch (error) {
     console.error("Reset password error:", error);
-    return NextResponse.json(
-      { error: "An error occurred" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "An error occurred" }, { status: 500 });
   }
 }

@@ -3,9 +3,9 @@ import { NextResponse } from "next/server";
 import { validateSession } from "~/lib/auth";
 import {
   deleteExperience,
+  type ExperienceContent,
   reorderExperiences,
   updateExperience,
-  type ExperienceContent,
 } from "~/lib/content";
 
 async function checkAuth(): Promise<boolean> {

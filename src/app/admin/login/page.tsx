@@ -76,42 +76,42 @@ export default function LoginPage() {
 
   if (needsSetup) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-bg p-4">
+      <div className="flex min-h-screen items-center justify-center bg-bg p-4">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
-            <h1 className="text-3xl font-bold">Set Up Your Password</h1>
+            <h1 className="font-bold text-3xl">Set Up Your Password</h1>
             <p className="mt-2 text-muted-fg">
               Create a password for your admin account
             </p>
           </div>
 
-          <form onSubmit={handleSetup} className="space-y-6">
+          <form className="space-y-6" onSubmit={handleSetup}>
             <div>
-              <label className="block text-sm font-medium mb-2">Email</label>
+              <label className="mb-2 block font-medium text-sm">Email</label>
               <input
+                className="w-full rounded-lg border bg-secondary/20 px-4 py-3 text-muted-fg"
+                disabled
                 type="email"
                 value={email}
-                disabled
-                className="w-full px-4 py-3 rounded-lg border bg-secondary/20 text-muted-fg"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Password</label>
+              <label className="mb-2 block font-medium text-sm">Password</label>
               <div className="relative">
                 <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
+                  className="w-full rounded-lg border bg-bg px-4 py-3 outline-none focus:ring-2 focus:ring-primary"
+                  minLength={8}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 rounded-lg border bg-bg focus:ring-2 focus:ring-primary outline-none"
                   placeholder="Enter password (min 8 characters)"
                   required
-                  minLength={8}
+                  type={showPassword ? "text" : "password"}
+                  value={password}
                 />
                 <button
-                  type="button"
+                  className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-fg hover:text-fg"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-fg hover:text-fg"
+                  type="button"
                 >
                   {showPassword ? (
                     <Icons.EyeOff className="size-5" />
@@ -123,42 +123,38 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">
+              <label className="mb-2 block font-medium text-sm">
                 Confirm Password
               </label>
               <input
-                type="password"
-                value={confirmPassword}
+                className="w-full rounded-lg border bg-bg px-4 py-3 outline-none focus:ring-2 focus:ring-primary"
+                minLength={8}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border bg-bg focus:ring-2 focus:ring-primary outline-none"
                 placeholder="Confirm password"
                 required
-                minLength={8}
+                type="password"
+                value={confirmPassword}
               />
             </div>
 
             {error && (
-              <div className="p-3 rounded-lg bg-danger/10 text-danger text-sm">
+              <div className="rounded-lg bg-danger/10 p-3 text-danger text-sm">
                 {error}
               </div>
             )}
 
-            <Button
-              type="submit"
-              className="w-full py-3"
-              isDisabled={loading}
-            >
+            <Button className="w-full py-3" isDisabled={loading} type="submit">
               {loading ? "Setting up..." : "Set Password & Login"}
             </Button>
 
             <button
-              type="button"
+              className="w-full text-muted-fg text-sm hover:text-fg"
               onClick={() => {
                 setNeedsSetup(false);
                 setPassword("");
                 setConfirmPassword("");
               }}
-              className="w-full text-sm text-muted-fg hover:text-fg"
+              type="button"
             >
               Back to login
             </button>
@@ -169,43 +165,43 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-bg p-4">
+    <div className="flex min-h-screen items-center justify-center bg-bg p-4">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold">Admin Login</h1>
+          <h1 className="font-bold text-3xl">Admin Login</h1>
           <p className="mt-2 text-muted-fg">
             Sign in to manage your website content
           </p>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-6">
+        <form className="space-y-6" onSubmit={handleLogin}>
           <div>
-            <label className="block text-sm font-medium mb-2">Email</label>
+            <label className="mb-2 block font-medium text-sm">Email</label>
             <input
-              type="email"
-              value={email}
+              className="w-full rounded-lg border bg-bg px-4 py-3 outline-none focus:ring-2 focus:ring-primary"
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 rounded-lg border bg-bg focus:ring-2 focus:ring-primary outline-none"
               placeholder="Enter your email"
               required
+              type="email"
+              value={email}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Password</label>
+            <label className="mb-2 block font-medium text-sm">Password</label>
             <div className="relative">
               <input
-                type={showPassword ? "text" : "password"}
-                value={password}
+                className="w-full rounded-lg border bg-bg px-4 py-3 outline-none focus:ring-2 focus:ring-primary"
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border bg-bg focus:ring-2 focus:ring-primary outline-none"
                 placeholder="Enter your password"
                 required
+                type={showPassword ? "text" : "password"}
+                value={password}
               />
               <button
-                type="button"
+                className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-fg hover:text-fg"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-fg hover:text-fg"
+                type="button"
               >
                 {showPassword ? (
                   <Icons.EyeOff className="size-5" />
@@ -217,23 +213,19 @@ export default function LoginPage() {
           </div>
 
           {error && (
-            <div className="p-3 rounded-lg bg-danger/10 text-danger text-sm">
+            <div className="rounded-lg bg-danger/10 p-3 text-danger text-sm">
               {error}
             </div>
           )}
 
-          <Button
-            type="submit"
-            className="w-full py-3"
-            isDisabled={loading}
-          >
+          <Button className="w-full py-3" isDisabled={loading} type="submit">
             {loading ? "Signing in..." : "Sign In"}
           </Button>
 
           <div className="text-center">
             <a
+              className="text-primary text-sm hover:underline"
               href="/admin/forgot-password"
-              className="text-sm text-primary hover:underline"
             >
               Forgot your password?
             </a>

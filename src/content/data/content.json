@@ -88,11 +88,7 @@
       "startedAt": "2015-05-01",
       "endedAt": "2015-09-01",
       "description": "Initiated the development of a Log Management project using MongoDB, enhancing data storage and retrieval processes.",
-      "skills": [
-        "MongoDB",
-        "Log Management",
-        "Software Development"
-      ]
+      "skills": ["MongoDB", "Log Management", "Software Development"]
     }
   ],
   "skills": [

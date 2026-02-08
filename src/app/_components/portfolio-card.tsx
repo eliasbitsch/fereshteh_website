@@ -32,7 +32,7 @@ export function PortfolioCard({
       </div>
       <div className="p-4">
         <h3 className="font-medium text-sm md:text-base">{title}</h3>
-        {subtitle && <p className="text-xs text-muted-fg mt-1">{subtitle}</p>}
+        {subtitle && <p className="mt-1 text-muted-fg text-xs">{subtitle}</p>}
       </div>
     </Link>
   );

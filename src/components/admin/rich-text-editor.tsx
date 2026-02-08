@@ -38,84 +38,84 @@ export function RichTextEditor({
   }, []);
 
   return (
-    <div className={`border rounded-lg bg-bg ${className}`}>
+    <div className={`rounded-lg border bg-bg ${className}`}>
       {/* Toolbar */}
-      <div className="flex flex-wrap gap-1 p-2 border-b bg-secondary/20">
+      <div className="flex flex-wrap gap-1 border-b bg-secondary/20 p-2">
         <Button
+          className="h-8 w-8 p-0"
+          onPress={() => execCommand("bold")}
+          size="sm"
           type="button"
           variant="ghost"
-          size="sm"
-          onPress={() => execCommand("bold")}
-          className="h-8 w-8 p-0"
         >
           <Icons.Bold className="size-4" />
         </Button>
         <Button
+          className="h-8 w-8 p-0"
+          onPress={() => execCommand("italic")}
+          size="sm"
           type="button"
           variant="ghost"
-          size="sm"
-          onPress={() => execCommand("italic")}
-          className="h-8 w-8 p-0"
         >
           <Icons.Italic className="size-4" />
         </Button>
         <Button
+          className="h-8 w-8 p-0"
+          onPress={() => execCommand("underline")}
+          size="sm"
           type="button"
           variant="ghost"
-          size="sm"
-          onPress={() => execCommand("underline")}
-          className="h-8 w-8 p-0"
         >
           <Icons.Underline className="size-4" />
         </Button>
-        <div className="w-px h-8 bg-border mx-1" />
+        <div className="mx-1 h-8 w-px bg-border" />
         <Button
+          className="h-8 w-8 p-0"
+          onPress={() => execCommand("insertUnorderedList")}
+          size="sm"
           type="button"
           variant="ghost"
-          size="sm"
-          onPress={() => execCommand("insertUnorderedList")}
-          className="h-8 w-8 p-0"
         >
           <Icons.List className="size-4" />
         </Button>
         <Button
+          className="h-8 w-8 p-0"
+          onPress={() => execCommand("insertOrderedList")}
+          size="sm"
           type="button"
           variant="ghost"
-          size="sm"
-          onPress={() => execCommand("insertOrderedList")}
-          className="h-8 w-8 p-0"
         >
           <Icons.ListOrdered className="size-4" />
         </Button>
-        <div className="w-px h-8 bg-border mx-1" />
+        <div className="mx-1 h-8 w-px bg-border" />
         <Button
-          type="button"
-          variant="ghost"
-          size="sm"
+          className="h-8 w-8 p-0"
           onPress={() => {
             const url = prompt("Enter URL:");
             if (url) execCommand("createLink", url);
           }}
-          className="h-8 w-8 p-0"
+          size="sm"
+          type="button"
+          variant="ghost"
         >
           <Icons.Link className="size-4" />
         </Button>
         <Button
+          className="h-8 w-8 p-0"
+          onPress={() => execCommand("unlink")}
+          size="sm"
           type="button"
           variant="ghost"
-          size="sm"
-          onPress={() => execCommand("unlink")}
-          className="h-8 w-8 p-0"
         >
           <Icons.Unlink className="size-4" />
         </Button>
-        <div className="w-px h-8 bg-border mx-1" />
+        <div className="mx-1 h-8 w-px bg-border" />
         <Button
+          className="h-8 w-8 p-0"
+          onPress={() => execCommand("removeFormat")}
+          size="sm"
           type="button"
           variant="ghost"
-          size="sm"
-          onPress={() => execCommand("removeFormat")}
-          className="h-8 w-8 p-0"
         >
           <Icons.RemoveFormatting className="size-4" />
         </Button>
@@ -123,19 +123,19 @@ export function RichTextEditor({
 
       {/* Editor */}
       <div
-        ref={editorRef}
-        contentEditable
-        suppressContentEditableWarning
-        onInput={handleInput}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        onPaste={handlePaste}
-        className={`min-h-[150px] p-4 outline-none prose prose-sm max-w-none ${
-          !value && !isFocused ? "text-muted-fg" : ""
+        className={`prose prose-sm min-h-[150px] max-w-none p-4 outline-none ${
+          value || isFocused ? "" : "text-muted-fg"
         }`}
+        contentEditable
         dangerouslySetInnerHTML={{
           __html: value || (isFocused ? "" : placeholder),
         }}
+        onBlur={() => setIsFocused(false)}
+        onFocus={() => setIsFocused(true)}
+        onInput={handleInput}
+        onPaste={handlePaste}
+        ref={editorRef}
+        suppressContentEditableWarning
       />
     </div>
   );
@@ -159,11 +159,11 @@ export function TextEditor({
 }: TextEditorProps) {
   return (
     <textarea
-      value={value}
+      className={`w-full min-w-0 resize-y rounded-lg border bg-transparent px-3 py-2 text-fg placeholder-muted-fg outline-none ${className}`}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
       rows={rows}
-      className={`w-full min-w-0 bg-transparent px-3 py-2 text-fg placeholder-muted-fg outline-none border rounded-lg resize-y ${className}`}
+      value={value}
     />
   );
 }

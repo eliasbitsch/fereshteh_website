@@ -15,9 +15,18 @@ interface HeroSectionProps {
   profilePictureVersion?: number;
 }
 
-export function HeroSection({ name, bio, availableForWork, showResumeButton = true, profilePictureVersion = 1 }: HeroSectionProps) {
+export function HeroSection({
+  name,
+  bio,
+  availableForWork,
+  showResumeButton = true,
+  profilePictureVersion = 1,
+}: HeroSectionProps) {
   return (
-    <section id="home" className="relative flex items-center justify-center overflow-hidden rounded-md py-20 pb-32 md:py-20 md:pb-50 scroll-mt-20">
+    <section
+      className="relative flex scroll-mt-20 items-center justify-center overflow-hidden rounded-md py-20 pb-32 md:py-20 md:pb-50"
+      id="home"
+    >
       <GridPattern />
       <ShadowEffect />
 
@@ -25,23 +34,23 @@ export function HeroSection({ name, bio, availableForWork, showResumeButton = tr
         <div className="grid justify-items-center gap-4">
           <div className="size-[250px] animate-delay-100 animate-fade-up">
             <Image
-              src={`${withBasePath("/profile-picture/fereshteh_portrait.avif")}?v=${profilePictureVersion}`}
               alt="Portrait"
-              width={250}
-              height={250}
               className="rounded-full"
+              height={250}
+              src={`${withBasePath("/profile-picture/fereshteh_portrait.avif")}?v=${profilePictureVersion}`}
+              width={250}
             />
           </div>
         </div>
         {availableForWork ? (
-          <div className="flex justify-center mt-20">
-            <BadgeAnimated className="flex items-center gap-2 text-sm animate-delay-300 animate-fade-up">
+          <div className="mt-20 flex justify-center">
+            <BadgeAnimated className="flex animate-delay-300 animate-fade-up items-center gap-2 text-sm">
               <Icons.Circle className="size-2 animate-pulse fill-success text-success" />
               Available for work
             </BadgeAnimated>
           </div>
         ) : (
-          <div className="h-6 mt-20" />
+          <div className="mt-20 h-6" />
         )}
         <h1 className="animate-delay-300 animate-fade-up text-center font-bold text-5xl md:text-7xl">
           {name}

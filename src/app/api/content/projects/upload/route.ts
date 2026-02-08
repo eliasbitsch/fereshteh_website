@@ -1,10 +1,10 @@
+import { spawn } from "node:child_process";
+import { existsSync } from "node:fs";
+import { mkdir, writeFile } from "node:fs/promises";
+import { basename, join } from "node:path";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { writeFile, mkdir } from "node:fs/promises";
-import { existsSync } from "node:fs";
-import { join, basename } from "node:path";
 import { validateSession } from "~/lib/auth";
-import { spawn } from "node:child_process";
 
 async function checkAuth(): Promise<boolean> {
   const cookieStore = await cookies();
@@ -47,7 +47,10 @@ export async function POST(request: Request) {
     }
 
     if (!file.name.toLowerCase().endsWith(".pdf")) {
-      return NextResponse.json({ error: "Only PDF files are allowed" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Only PDF files are allowed" },
+        { status: 400 }
+      );
     }
 
     const projectsDir = join(process.cwd(), "public", "projects");
@@ -75,7 +78,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       success: true,
       filename: file.name,
-      message: "File uploaded. Image conversion started in background."
+      message: "File uploaded. Image conversion started in background.",
     });
   } catch (error) {
     console.error("Upload error:", error);

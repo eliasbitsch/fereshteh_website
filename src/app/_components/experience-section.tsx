@@ -20,7 +20,10 @@ interface ExperienceSectionProps {
   title?: string;
 }
 
-export function ExperienceSection({ experiences, title = "Experience" }: ExperienceSectionProps) {
+export function ExperienceSection({
+  experiences,
+  title = "Experience",
+}: ExperienceSectionProps) {
   return (
     <section
       className="container max-w-6xl animate-delay-700 animate-fade-up scroll-m-32"
@@ -28,10 +31,13 @@ export function ExperienceSection({ experiences, title = "Experience" }: Experie
     >
       <h2 className="mb-10 font-semibold text-2xl md:text-3xl">{title}</h2>
 
-      <TracingBeam className="hidden px-6 md:flex md:flex-col" offset={["start start", "end end"]}>
+      <TracingBeam
+        className="hidden px-6 md:flex md:flex-col"
+        offset={["start start", "end end"]}
+      >
         <ExperienceList experiences={experiences} />
       </TracingBeam>
-      <ExperienceList experiences={experiences} className="md:hidden" />
+      <ExperienceList className="md:hidden" experiences={experiences} />
     </section>
   );
 }

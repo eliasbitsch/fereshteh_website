@@ -1,12 +1,12 @@
-import { cookies } from "next/headers";
-import { revalidatePath } from "next/cache";
-import { NextResponse } from "next/server";
-import { writeFile, mkdir } from "node:fs/promises";
 import { existsSync } from "node:fs";
-import { join, extname } from "node:path";
+import { mkdir, writeFile } from "node:fs/promises";
+import { extname, join } from "node:path";
+import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
+import sharp from "sharp";
 import { validateSession } from "~/lib/auth";
 import { incrementProfilePictureVersion } from "~/lib/content";
-import sharp from "sharp";
 
 async function checkAuth(): Promise<boolean> {
   const cookieStore = await cookies();
@@ -31,7 +31,10 @@ export async function POST(request: Request) {
     const allowed = [".png", ".jpg", ".jpeg", ".webp", ".avif"];
     const ext = extname(file.name).toLowerCase();
     if (!allowed.includes(ext)) {
-      return NextResponse.json({ error: "Only image files are allowed" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Only image files are allowed" },
+        { status: 400 }
+      );
     }
 
     const profileDir = join(process.cwd(), "public", "profile-picture");
@@ -43,7 +46,7 @@ export async function POST(request: Request) {
     // Keep original file and also write converted AVIF as fereshteh_portrait.avif
     const originalExt = extname(file.name).toLowerCase() || ".jpg";
     const originalName = `fereshteh_portrait_original${originalExt}`;
-    const avifName = `fereshteh_portrait.avif`;
+    const avifName = "fereshteh_portrait.avif";
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
@@ -54,13 +57,19 @@ export async function POST(request: Request) {
 
     // Convert to AVIF synchronously and save (higher quality)
     try {
-      const avifBuffer = await sharp(buffer).avif({ quality: 90, effort: 6 }).toBuffer();
+      const avifBuffer = await sharp(buffer)
+        .avif({ quality: 90, effort: 6 })
+        .toBuffer();
       const avifPath = join(profileDir, avifName);
       await writeFile(avifPath, avifBuffer);
     } catch (err) {
       console.error("Failed to convert profile picture to AVIF:", err);
       // still return success for original saved
-      return NextResponse.json({ success: true, filename: originalName, warning: "Conversion failed" });
+      return NextResponse.json({
+        success: true,
+        filename: originalName,
+        warning: "Conversion failed",
+      });
     }
 
     // Increment version to bust cache
@@ -69,9 +78,16 @@ export async function POST(request: Request) {
     // Revalidate homepage to show new image immediately
     revalidatePath("/");
 
-    return NextResponse.json({ success: true, filename: avifName, version: newVersion });
+    return NextResponse.json({
+      success: true,
+      filename: avifName,
+      version: newVersion,
+    });
   } catch (error) {
     console.error("Profile picture upload error:", error);
-    return NextResponse.json({ error: "Failed to upload file" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to upload file" },
+      { status: 500 }
+    );
   }
 }

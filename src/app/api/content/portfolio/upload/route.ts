@@ -1,8 +1,8 @@
+import { existsSync } from "node:fs";
+import { mkdir, writeFile } from "node:fs/promises";
+import { join } from "node:path";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { writeFile, mkdir } from "node:fs/promises";
-import { existsSync } from "node:fs";
-import { join } from "node:path";
 import { validateSession } from "~/lib/auth";
 
 async function checkAuth(): Promise<boolean> {
@@ -26,7 +26,10 @@ export async function POST(request: Request) {
     }
 
     if (!file.name.toLowerCase().endsWith(".pdf")) {
-      return NextResponse.json({ error: "Only PDF files are allowed" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Only PDF files are allowed" },
+        { status: 400 }
+      );
     }
 
     const portfolioDir = join(process.cwd(), "public", "portfolio");
@@ -44,10 +47,10 @@ export async function POST(request: Request) {
     const filePath = join(portfolioDir, file.name);
     await writeFile(filePath, buffer);
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       filename: file.name,
-      message: "File uploaded successfully" 
+      message: "File uploaded successfully",
     });
   } catch (error) {
     console.error("Upload error:", error);

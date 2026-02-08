@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
-import { Icons } from "~/components/ui/icons";
 import { SiteFooter } from "~/components/site-footer";
+import { Icons } from "~/components/ui/icons";
 
 // Set up PDF.js worker - using CDN for reliability
 if (typeof window !== "undefined") {
@@ -13,8 +13,8 @@ if (typeof window !== "undefined") {
   const originalError = console.error;
   console.error = (...args) => {
     if (
-      typeof args[0] === 'string' &&
-      args[0].includes('Canvas is already in error state')
+      typeof args[0] === "string" &&
+      args[0].includes("Canvas is already in error state")
     ) {
       return;
     }
@@ -94,7 +94,7 @@ export function PDFViewerClean({
       scrollContainerRef.current.scrollTo({
         top: 0,
         left: scrollContainerRef.current.scrollLeft,
-        behavior: 'smooth'
+        behavior: "smooth",
       });
     }
   };
@@ -108,13 +108,13 @@ export function PDFViewerClean({
       setIsScrolledDown(container.scrollTop > 50);
     };
 
-    container.addEventListener('scroll', handleScroll);
+    container.addEventListener("scroll", handleScroll);
 
     // Initialize scroll state
     handleScroll();
 
     return () => {
-      container.removeEventListener('scroll', handleScroll);
+      container.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
@@ -158,11 +158,11 @@ export function PDFViewerClean({
             <button
               aria-label="Jump to top"
               className="flex items-center gap-2 rounded-lg border px-3 py-2 transition-colors hover:bg-muted disabled:opacity-50"
+              disabled={!isScrolledDown}
               onClick={(e) => {
                 e.stopPropagation();
                 handleJumpToTop();
               }}
-              disabled={!isScrolledDown}
               type="button"
             >
               <Icons.ArrowUp className="size-4" />
@@ -191,11 +191,8 @@ export function PDFViewerClean({
         className="flex-1 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        <div
-          ref={scrollContainerRef}
-          className="size-full overflow-auto"
-        >
-          <div className="flex flex-col items-center justify-center min-h-full">
+        <div className="size-full overflow-auto" ref={scrollContainerRef}>
+          <div className="flex min-h-full flex-col items-center justify-center">
             <div className="py-8">
               <div
                 style={{
@@ -210,10 +207,10 @@ export function PDFViewerClean({
                       <div className="text-muted-fg">Loading PDF...</div>
                     </div>
                   }
-                  onLoadSuccess={onDocumentLoadSuccess}
                   onLoadError={(error) => {
                     console.error("Error loading PDF:", error);
                   }}
+                  onLoadSuccess={onDocumentLoadSuccess}
                 >
                   {Array.from(new Array(numPages), (_el, index) => {
                     // Always render at a safe canvas size to avoid white screens
@@ -221,23 +218,30 @@ export function PDFViewerClean({
 
                     return (
                       <Page
+                        className="shadow-lg"
+                        devicePixelRatio={1}
+                        error={
+                          <div className="flex items-center justify-center p-4">
+                            <div className="text-muted-fg">
+                              Error loading page
+                            </div>
+                          </div>
+                        }
                         key={`page_${index + 1}`}
+                        loading={
+                          <div
+                            className="flex h-[800px] items-center justify-center"
+                            style={{ width: `${safeRenderWidth}px` }}
+                          >
+                            <div className="text-muted-fg">
+                              Loading page {index + 1}...
+                            </div>
+                          </div>
+                        }
                         pageNumber={index + 1}
                         renderAnnotationLayer={false}
                         renderTextLayer={false}
                         width={safeRenderWidth}
-                        devicePixelRatio={1}
-                        className="shadow-lg"
-                        loading={
-                          <div className="flex h-[800px] items-center justify-center" style={{ width: `${safeRenderWidth}px` }}>
-                            <div className="text-muted-fg">Loading page {index + 1}...</div>
-                          </div>
-                        }
-                        error={
-                          <div className="flex items-center justify-center p-4">
-                            <div className="text-muted-fg">Error loading page</div>
-                          </div>
-                        }
                       />
                     );
                   })}

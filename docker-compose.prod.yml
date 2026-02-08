@@ -31,4 +31,7 @@ services:
       # WWW redirect middleware
       - "traefik.http.middlewares.www-redirect.redirectregex.regex=^https://www\\.fereshteh-hosseini\\.com/(.*)"
       - "traefik.http.middlewares.www-redirect.redirectregex.replacement=https://fereshteh-hosseini.com/$${1}"
-      - "traefik.http.routers.fereshteh-web.middlewares=www-redirect"
+      # Buffering middleware for large uploads
+      - "traefik.http.middlewares.buffering.buffering.maxRequestBodyBytes=20971520"
+      - "traefik.http.middlewares.buffering.buffering.memRequestBodyBytes=2097152"
+      - "traefik.http.routers.fereshteh-web.middlewares=www-redirect,buffering"

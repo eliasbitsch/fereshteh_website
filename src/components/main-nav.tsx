@@ -15,7 +15,10 @@ function isActive(href: string, activeSection: string | null) {
 }
 
 export function MainNav() {
-  const sectionIds = useMemo(() => ['home', ...navLinks.map(link => link.href.replace('#', ''))], []);
+  const sectionIds = useMemo(
+    () => ["home", ...navLinks.map((link) => link.href.replace("#", ""))],
+    []
+  );
   const activeSection = useActiveItem(sectionIds);
   const activeHref = activeSection ? `#${activeSection}` : "";
   const [hoveredPath, setHoveredPath] = useState(activeHref);
@@ -63,7 +66,10 @@ export function MainNav() {
             ) : (
               <span>{item.label}</span>
             )}
-            {isActive(item.href, hoveredPath === "" ? null : hoveredPath.replace('#', '')) ? (
+            {isActive(
+              item.href,
+              hoveredPath === "" ? null : hoveredPath.replace("#", "")
+            ) ? (
               <m.div
                 aria-hidden="true"
                 className="absolute bottom-0 left-0 -z-10 size-full rounded-full bg-muted"

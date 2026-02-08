@@ -1,7 +1,10 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { validateSession } from "~/lib/auth";
-import { getProjectsMetadata, setProjectMetadata } from "~/lib/projects-metadata";
+import {
+  getProjectsMetadata,
+  setProjectMetadata,
+} from "~/lib/projects-metadata";
 
 async function checkAuth(): Promise<boolean> {
   const cookieStore = await cookies();
@@ -16,7 +19,10 @@ export async function GET() {
     return NextResponse.json({ meta });
   } catch (error) {
     console.error("Get projects metadata error:", error);
-    return NextResponse.json({ error: "Failed to get metadata" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to get metadata" },
+      { status: 500 }
+    );
   }
 }
 
@@ -27,17 +33,29 @@ export async function PUT(request: Request) {
     }
 
     const body = await request.json();
-    const { key, data } = body as { key: string; data: { title?: string; subtitle?: string } };
+    const { key, data } = body as {
+      key: string;
+      data: { title?: string; subtitle?: string };
+    };
 
-    if (!key || !data) {
-      return NextResponse.json({ error: "Key and data are required" }, { status: 400 });
+    if (!(key && data)) {
+      return NextResponse.json(
+        { error: "Key and data are required" },
+        { status: 400 }
+      );
     }
 
-    setProjectMetadata(key, { title: data.title || undefined, subtitle: data.subtitle || undefined });
+    setProjectMetadata(key, {
+      title: data.title || undefined,
+      subtitle: data.subtitle || undefined,
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Update projects metadata error:", error);
-    return NextResponse.json({ error: "Failed to update metadata" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to update metadata" },
+      { status: 500 }
+    );
   }
 }

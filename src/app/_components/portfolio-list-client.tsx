@@ -22,9 +22,9 @@ export default function PortfolioListClient({
         <PortfolioCard
           key={item.pdfPath}
           slug={item.title}
+          subtitle={item.subtitle}
           thumbnailPath={item.thumbnailPath}
           title={item.title}
-          subtitle={item.subtitle}
         />
       ))}
     </div>

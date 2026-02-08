@@ -1,10 +1,10 @@
+import { existsSync } from "node:fs";
+import { mkdir, unlink, writeFile } from "node:fs/promises";
+import { extname, join } from "node:path";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { writeFile, mkdir, unlink } from "node:fs/promises";
-import { existsSync, readdirSync } from "node:fs";
-import { join, extname } from "node:path";
-import { validateSession } from "~/lib/auth";
 import sharp from "sharp";
+import { validateSession } from "~/lib/auth";
 import { normalizeProjectFilename } from "~/lib/projects-pdf";
 
 async function checkAuth(): Promise<boolean> {
@@ -56,7 +56,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid title" }, { status: 400 });
     }
 
-    console.log(`[Thumbnail Upload] Original title: "${title}", Normalized: "${normalizedTitle}"`);
+    console.log(
+      `[Thumbnail Upload] Original title: "${title}", Normalized: "${normalizedTitle}"`
+    );
 
     // Remove existing thumbnails with various naming patterns
     const cleanupCandidates = [title, normalizedTitle, title.toLowerCase()];
@@ -69,16 +71,23 @@ export async function POST(request: Request) {
           try {
             await unlink(existingPath);
             removedCount++;
-            console.log(`[Thumbnail Upload] Removed old thumbnail: ${candidate}${ext}`);
+            console.log(
+              `[Thumbnail Upload] Removed old thumbnail: ${candidate}${ext}`
+            );
           } catch (err) {
-            console.error(`[Thumbnail Upload] Failed to remove ${candidate}${ext}:`, err);
+            console.error(
+              `[Thumbnail Upload] Failed to remove ${candidate}${ext}:`,
+              err
+            );
           }
         }
       }
     }
 
     if (removedCount > 0) {
-      console.log(`[Thumbnail Upload] Cleaned up ${removedCount} old thumbnail(s)`);
+      console.log(
+        `[Thumbnail Upload] Cleaned up ${removedCount} old thumbnail(s)`
+      );
     }
 
     // Convert file to buffer
@@ -88,7 +97,9 @@ export async function POST(request: Request) {
     // Save original with normalized title + original ext
     const originalPath = join(thumbnailsDir, `${normalizedTitle}${fileExt}`);
     await writeFile(originalPath, buffer);
-    console.log(`[Thumbnail Upload] Saved original: ${normalizedTitle}${fileExt}`);
+    console.log(
+      `[Thumbnail Upload] Saved original: ${normalizedTitle}${fileExt}`
+    );
 
     // Create AVIF thumbnail (400px width, cover). Use higher quality for better visuals.
     try {
@@ -99,21 +110,26 @@ export async function POST(request: Request) {
 
       const avifPath = join(thumbnailsDir, `${normalizedTitle}.avif`);
       await writeFile(avifPath, thumbBuffer);
-      console.log(`[Thumbnail Upload] Created AVIF thumbnail: ${normalizedTitle}.avif`);
+      console.log(
+        `[Thumbnail Upload] Created AVIF thumbnail: ${normalizedTitle}.avif`
+      );
 
       return NextResponse.json({
         success: true,
         thumbnailPath: `/projects-thumbnails/${normalizedTitle}.avif`,
-        normalizedFilename: normalizedTitle
+        normalizedFilename: normalizedTitle,
       });
     } catch (err) {
-      console.error("[Thumbnail Upload] Failed to convert thumbnail to AVIF:", err);
+      console.error(
+        "[Thumbnail Upload] Failed to convert thumbnail to AVIF:",
+        err
+      );
       // fallback to original saved
       return NextResponse.json({
         success: true,
         thumbnailPath: `/projects-thumbnails/${normalizedTitle}${fileExt}`,
         warning: "Conversion failed",
-        normalizedFilename: normalizedTitle
+        normalizedFilename: normalizedTitle,
       });
     }
   } catch (error) {
@@ -148,7 +164,9 @@ export async function DELETE(request: Request) {
     const normalizedTitle = normalizeProjectFilename(title);
     const candidates = [title, normalizedTitle, title.toLowerCase()];
 
-    console.log(`[Thumbnail Delete] Deleting thumbnails for title: "${title}", Normalized: "${normalizedTitle}"`);
+    console.log(
+      `[Thumbnail Delete] Deleting thumbnails for title: "${title}", Normalized: "${normalizedTitle}"`
+    );
 
     let deletedCount = 0;
     for (const candidate of candidates) {
@@ -160,7 +178,10 @@ export async function DELETE(request: Request) {
             deletedCount++;
             console.log(`[Thumbnail Delete] Deleted: ${candidate}${ext}`);
           } catch (err) {
-            console.error(`[Thumbnail Delete] Failed to delete ${candidate}${ext}:`, err);
+            console.error(
+              `[Thumbnail Delete] Failed to delete ${candidate}${ext}:`,
+              err
+            );
           }
         }
       }

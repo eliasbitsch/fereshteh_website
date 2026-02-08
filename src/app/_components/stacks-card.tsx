@@ -1,6 +1,5 @@
 import Image from "next/image";
-import type { SkillContent } from "~/lib/content";
-import { Icons, type Icon } from "~/components/ui/icons";
+import { type Icon, Icons } from "~/components/ui/icons";
 import { LinkPrimitive } from "~/components/ui/link";
 import { Marquee } from "~/components/ui/marquee";
 import {
@@ -8,6 +7,7 @@ import {
   TooltipContent,
   TooltipRoot,
 } from "~/components/ui/tooltip";
+import type { SkillContent } from "~/lib/content";
 import { withBasePath } from "~/lib/get-base-path";
 
 interface StacksCardProps {
@@ -25,7 +25,8 @@ export function StacksCard({ skills = [] }: StacksCardProps) {
         {skills.map((skill) => {
           // Use custom icon if provided, otherwise use built-in icon
           const hasCustomIcon = skill.customIcon;
-          const BuiltInIcon = skill.icon in Icons ? Icons[skill.icon as Icon] : null;
+          const BuiltInIcon =
+            skill.icon in Icons ? Icons[skill.icon as Icon] : null;
 
           return (
             <TooltipRoot closeDelay={0} delay={300} key={skill.name}>
@@ -37,16 +38,16 @@ export function StacksCard({ skills = [] }: StacksCardProps) {
               >
                 {hasCustomIcon ? (
                   <Image
-                    src={withBasePath(skill.customIcon!)}
                     alt={skill.name}
-                    width={40}
-                    height={40}
                     className="size-10"
+                    height={40}
+                    src={withBasePath(skill.customIcon!)}
+                    width={40}
                   />
                 ) : BuiltInIcon ? (
                   <BuiltInIcon className="size-10" />
                 ) : (
-                  <span className="size-10 flex items-center justify-center text-xs font-medium bg-secondary rounded">
+                  <span className="flex size-10 items-center justify-center rounded bg-secondary font-medium text-xs">
                     {skill.name.slice(0, 2)}
                   </span>
                 )}

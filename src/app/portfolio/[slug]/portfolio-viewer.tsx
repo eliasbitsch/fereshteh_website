@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useCallback, useRef, useState, useEffect } from "react";
-import { Icons } from "~/components/ui/icons";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "~/components/ui/button";
+import { Icons } from "~/components/ui/icons";
 
 interface PortfolioItem {
   title: string;
@@ -80,11 +80,13 @@ export function PortfolioViewer({ item }: PortfolioViewerProps) {
       const progress = Math.min(elapsed / ZOOM_ANIMATION_MS, 1);
 
       // Ease out cubic
-      const eased = 1 - Math.pow(1 - progress, 3);
+      const eased = 1 - (1 - progress) ** 3;
 
       // Interpolate scroll position
-      container.scrollLeft = startScrollLeft + (targetScrollLeft - startScrollLeft) * eased;
-      container.scrollTop = startScrollTop + (targetScrollTop - startScrollTop) * eased;
+      container.scrollLeft =
+        startScrollLeft + (targetScrollLeft - startScrollLeft) * eased;
+      container.scrollTop =
+        startScrollTop + (targetScrollTop - startScrollTop) * eased;
 
       if (progress < 1) {
         animationRef.current = requestAnimationFrame(animate);
@@ -98,13 +100,14 @@ export function PortfolioViewer({ item }: PortfolioViewerProps) {
   }, []);
 
   // Cleanup animation on unmount
-  useEffect(() => {
-    return () => {
+  useEffect(
+    () => () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
-    };
-  }, []);
+    },
+    []
+  );
 
   const handleZoomIn = () => {
     const newZoom = Math.min(zoom + ZOOM_STEP, MAX_ZOOM);
@@ -154,7 +157,7 @@ export function PortfolioViewer({ item }: PortfolioViewerProps) {
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
-      if (!isDragging || !scrollContainerRef.current) return;
+      if (!(isDragging && scrollContainerRef.current)) return;
       const deltaX = dragStartX.current - e.clientX;
       const deltaY = dragStartY.current - e.clientY;
       scrollContainerRef.current.scrollLeft = scrollStartX.current + deltaX;
@@ -172,28 +175,29 @@ export function PortfolioViewer({ item }: PortfolioViewerProps) {
   }, []);
 
   // Ctrl/Cmd + scroll to zoom (instant for smooth trackpad feel)
-  const handleWheel = useCallback(
-    (e: React.WheelEvent) => {
-      if (e.ctrlKey || e.metaKey) {
-        e.preventDefault();
-        const delta = e.deltaY > 0 ? -ZOOM_STEP : ZOOM_STEP;
-        setZoom((prev) => {
-          const newZoom = Math.min(Math.max(prev + delta, MIN_ZOOM), MAX_ZOOM);
-          // For wheel zoom, adjust scroll instantly (feels more responsive)
-          const container = scrollContainerRef.current;
-          if (container && prev !== newZoom) {
-            const scrollCenterX = container.scrollLeft + container.clientWidth / 2;
-            const scrollCenterY = container.scrollTop + container.clientHeight / 2;
-            const scale = newZoom / prev;
-            container.scrollLeft = scrollCenterX * scale - container.clientWidth / 2;
-            container.scrollTop = scrollCenterY * scale - container.clientHeight / 2;
-          }
-          return newZoom;
-        });
-      }
-    },
-    []
-  );
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    if (e.ctrlKey || e.metaKey) {
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? -ZOOM_STEP : ZOOM_STEP;
+      setZoom((prev) => {
+        const newZoom = Math.min(Math.max(prev + delta, MIN_ZOOM), MAX_ZOOM);
+        // For wheel zoom, adjust scroll instantly (feels more responsive)
+        const container = scrollContainerRef.current;
+        if (container && prev !== newZoom) {
+          const scrollCenterX =
+            container.scrollLeft + container.clientWidth / 2;
+          const scrollCenterY =
+            container.scrollTop + container.clientHeight / 2;
+          const scale = newZoom / prev;
+          container.scrollLeft =
+            scrollCenterX * scale - container.clientWidth / 2;
+          container.scrollTop =
+            scrollCenterY * scale - container.clientHeight / 2;
+        }
+        return newZoom;
+      });
+    }
+  }, []);
 
   const imageWidth = Math.round(BASE_WIDTH * zoom);
 
@@ -203,7 +207,7 @@ export function PortfolioViewer({ item }: PortfolioViewerProps) {
         <div className="sticky top-0 z-10 border-b bg-bg px-4 py-3">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <Button onClick={handleClose} variant="ghost" size="sm">
+              <Button onClick={handleClose} size="sm" variant="ghost">
                 <Icons.ChevronLeft className="mr-2 size-4" />
                 Back
               </Button>
@@ -212,23 +216,23 @@ export function PortfolioViewer({ item }: PortfolioViewerProps) {
             <div className="flex items-center gap-2">
               {!isAtTop && (
                 <Button
+                  className="size-10"
                   onPress={handleJumpToTop}
-                  variant="outline"
                   size="icon"
                   title="Jump to top"
-                  className="size-10"
+                  variant="outline"
                 >
                   <Icons.ArrowUp className="size-4" />
                 </Button>
               )}
               <div className="flex h-10 items-center gap-1 rounded-lg border bg-bg p-1">
                 <Button
-                  onPress={handleZoomOut}
-                  variant="ghost"
-                  size="icon"
-                  isDisabled={zoom <= MIN_ZOOM}
-                  title="Zoom out"
                   className="size-8"
+                  isDisabled={zoom <= MIN_ZOOM}
+                  onPress={handleZoomOut}
+                  size="icon"
+                  title="Zoom out"
+                  variant="ghost"
                 >
                   <Icons.Minus className="size-4" />
                 </Button>
@@ -236,27 +240,32 @@ export function PortfolioViewer({ item }: PortfolioViewerProps) {
                   {Math.round(zoom * 100)}%
                 </span>
                 <Button
-                  onPress={handleZoomIn}
-                  variant="ghost"
-                  size="icon"
-                  isDisabled={zoom >= MAX_ZOOM}
-                  title="Zoom in"
                   className="size-8"
+                  isDisabled={zoom >= MAX_ZOOM}
+                  onPress={handleZoomIn}
+                  size="icon"
+                  title="Zoom in"
+                  variant="ghost"
                 >
                   <Icons.Plus className="size-4" />
                 </Button>
                 <Button
-                  onPress={handleResetZoom}
-                  variant="ghost"
-                  size="icon"
-                  isDisabled={zoom === 1}
-                  title="Reset zoom"
                   className="size-8"
+                  isDisabled={zoom === 1}
+                  onPress={handleResetZoom}
+                  size="icon"
+                  title="Reset zoom"
+                  variant="ghost"
                 >
                   <Icons.Maximize className="size-4" />
                 </Button>
               </div>
-              <Button onClick={handleDownload} variant="outline" size="sm" className="h-10">
+              <Button
+                className="h-10"
+                onClick={handleDownload}
+                size="sm"
+                variant="outline"
+              >
                 <Icons.Download className="mr-2 size-4" />
                 Download PDF
               </Button>
@@ -264,30 +273,34 @@ export function PortfolioViewer({ item }: PortfolioViewerProps) {
           </div>
         </div>
         <div
-          ref={scrollContainerRef}
           className="flex-1 overflow-auto"
           onMouseDown={handleMouseDown}
+          onMouseLeave={handleMouseLeave}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseLeave}
-          onWheel={handleWheel}
           onScroll={handleScroll}
-          style={{ cursor: zoom > 1 ? (isDragging ? "grabbing" : "grab") : "default" }}
+          onWheel={handleWheel}
+          ref={scrollContainerRef}
+          style={{
+            cursor: zoom > 1 ? (isDragging ? "grabbing" : "grab") : "default",
+          }}
         >
           <div className="inline-flex min-h-full min-w-full justify-center p-4">
             <Image
-              src={item.imagePath}
               alt={item.title}
-              width={1200}
+              className="h-auto select-none rounded-lg border"
+              draggable={false}
               height={1600}
-              className="h-auto rounded-lg border select-none"
+              priority
+              src={item.imagePath}
               style={{
                 width: `${imageWidth}px`,
                 maxWidth: "none",
-                transition: isAnimatingZoom ? `width ${ZOOM_ANIMATION_MS}ms cubic-bezier(0.33, 1, 0.68, 1)` : "none",
+                transition: isAnimatingZoom
+                  ? `width ${ZOOM_ANIMATION_MS}ms cubic-bezier(0.33, 1, 0.68, 1)`
+                  : "none",
               }}
-              priority
-              draggable={false}
+              width={1200}
             />
           </div>
         </div>

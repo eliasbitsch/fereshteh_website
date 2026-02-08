@@ -11,15 +11,18 @@ interface AboutSectionProps {
   skills?: SkillContent[];
 }
 
-export function AboutSection({ title, description, location, skills }: AboutSectionProps) {
+export function AboutSection({
+  title,
+  description,
+  location,
+  skills,
+}: AboutSectionProps) {
   return (
     <section className="container max-w-6xl">
       <h2 className="mb-10 font-semibold text-2xl md:text-3xl">{title}</h2>
 
       <div className="mb-8 max-w-3xl">
-        <p className="text-muted-fg leading-relaxed">
-          {description}
-        </p>
+        <p className="text-muted-fg leading-relaxed">{description}</p>
       </div>
 
       <m.div

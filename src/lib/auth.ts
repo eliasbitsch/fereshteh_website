@@ -39,7 +39,7 @@ function saveSessions(sessions: Map<string, Session>): void {
   writeFileSync(SESSIONS_FILE, JSON.stringify(obj, null, 2));
 }
 
-function hashPassword(password: string): string {
+export function hashPassword(password: string): string {
   return createHash("sha256").update(password).digest("hex");
 }
 
@@ -58,7 +58,9 @@ function saveAdmins(data: { admins: Admin[] }): void {
 
 export function isValidEmail(email: string): boolean {
   const admins = getAdmins();
-  return admins.admins.some((admin) => admin.email.toLowerCase() === email.toLowerCase());
+  return admins.admins.some(
+    (admin) => admin.email.toLowerCase() === email.toLowerCase()
+  );
 }
 
 export function validateCredentials(email: string, password: string): boolean {
@@ -67,7 +69,7 @@ export function validateCredentials(email: string, password: string): boolean {
     (a) => a.email.toLowerCase() === email.toLowerCase()
   );
 
-  if (!admin || !admin.passwordHash) {
+  if (!(admin && admin.passwordHash)) {
     return false;
   }
 
@@ -148,7 +150,7 @@ export function validateResetToken(token: string): string | null {
   const admins = getAdmins();
   const admin = admins.admins.find((a) => a.resetToken === token);
 
-  if (!admin || !admin.resetTokenExpiry) {
+  if (!(admin && admin.resetTokenExpiry)) {
     return null;
   }
 
@@ -159,7 +161,10 @@ export function validateResetToken(token: string): string | null {
   return admin.email;
 }
 
-export function resetPasswordWithToken(token: string, newPassword: string): boolean {
+export function resetPasswordWithToken(
+  token: string,
+  newPassword: string
+): boolean {
   const email = validateResetToken(token);
   if (!email) {
     return false;
@@ -170,7 +175,9 @@ export function resetPasswordWithToken(token: string, newPassword: string): bool
 export function addAdmin(email: string): boolean {
   const admins = getAdmins();
 
-  if (admins.admins.some((a) => a.email.toLowerCase() === email.toLowerCase())) {
+  if (
+    admins.admins.some((a) => a.email.toLowerCase() === email.toLowerCase())
+  ) {
     return false; // Already exists
   }
 

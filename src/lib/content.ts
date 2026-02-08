@@ -108,7 +108,9 @@ export function updateHero(hero: Partial<HeroContent>): ContentData {
   return content;
 }
 
-export function updateSections(sections: Partial<SectionsContent>): ContentData {
+export function updateSections(
+  sections: Partial<SectionsContent>
+): ContentData {
   const content = getContent();
   content.sections = { ...content.sections, ...sections };
   saveContent(content);
@@ -129,7 +131,9 @@ export function updateSite(site: Partial<SiteContent>): ContentData {
   return content;
 }
 
-export function updateLocation(location: Partial<LocationContent>): ContentData {
+export function updateLocation(
+  location: Partial<LocationContent>
+): ContentData {
   const content = getContent();
   content.location = { ...content.location, ...location };
   saveContent(content);

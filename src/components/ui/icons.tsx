@@ -1,18 +1,16 @@
-import { cn } from "~/lib/cva";
 import {
-  SiFigma,
-  SiAdobexd,
   SiAdobephotoshop,
-  SiUnity,
+  SiAdobexd,
   SiArduino,
-  SiR,
-  SiHtml5,
   SiCss3,
-  SiJavascript,
-  SiReact,
+  SiFigma,
+  SiHtml5,
+  SiR,
+  SiRos,
   SiShadcnui,
-  SiRos
+  SiUnity,
 } from "react-icons/si";
+import { cn } from "~/lib/cva";
 
 export type IconProps = React.ComponentProps<"svg">;
 export type Icon = keyof typeof Icons;
@@ -954,15 +952,15 @@ export const Icons = {
   ),
   EyeOff: (props) => (
     <svg
-      height={32}
-      viewBox="0 0 24 24"
-      width={32}
-      xmlns="http://www.w3.org/2000/svg"
       fill="none"
+      height={32}
       stroke="currentColor"
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={2}
+      viewBox="0 0 24 24"
+      width={32}
+      xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
       <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
@@ -1584,32 +1582,46 @@ export const Icons = {
     </svg>
   ),
   // Technology icons from react-icons with brand colors
-  Figma: (props) => <SiFigma {...props} style={{ color: '#F24E1E', ...props.style }} />,
-  AdobeXD: (props) => <SiAdobexd {...props} style={{ color: '#FF61F6', ...props.style }} />,
-  Photoshop: (props) => <SiAdobephotoshop {...props} style={{ color: '#31A8FF', ...props.style }} />,
+  Figma: (props) => (
+    <SiFigma {...props} style={{ color: "#F24E1E", ...props.style }} />
+  ),
+  AdobeXD: (props) => (
+    <SiAdobexd {...props} style={{ color: "#FF61F6", ...props.style }} />
+  ),
+  Photoshop: (props) => (
+    <SiAdobephotoshop {...props} style={{ color: "#31A8FF", ...props.style }} />
+  ),
   Unity: (props) => <SiUnity {...props} />,
-  Arduino: (props) => <SiArduino {...props} style={{ color: '#00979D', ...props.style }} />,
-  RStudio: (props) => <SiR {...props} style={{ color: '#276DC3', ...props.style }} />,
-  HTML: (props) => <SiHtml5 {...props} style={{ color: '#E34F26', ...props.style }} />,
-  CSS: (props) => <SiCss3 {...props} style={{ color: '#1572B6', ...props.style }} />,
+  Arduino: (props) => (
+    <SiArduino {...props} style={{ color: "#00979D", ...props.style }} />
+  ),
+  RStudio: (props) => (
+    <SiR {...props} style={{ color: "#276DC3", ...props.style }} />
+  ),
+  HTML: (props) => (
+    <SiHtml5 {...props} style={{ color: "#E34F26", ...props.style }} />
+  ),
+  CSS: (props) => (
+    <SiCss3 {...props} style={{ color: "#1572B6", ...props.style }} />
+  ),
   ShadcnUI: (props) => <SiShadcnui {...props} />,
   SPSS: (props) => (
     <svg
       aria-label="SPSS"
-      viewBox="0 0 80 24"
       height={24}
+      viewBox="0 0 80 24"
       width={80}
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
       <text
-        x="40"
-        y="18"
+        fill="#054ADA"
         fontFamily="Arial, sans-serif"
         fontSize="18"
         fontWeight="bold"
-        fill="#054ADA"
         textAnchor="middle"
+        x="40"
+        y="18"
       >
         SPSS
       </text>
@@ -1618,11 +1630,11 @@ export const Icons = {
   Ros: (props) => <SiRos {...props} />,
   Penpot: (props) => (
     <svg
+      height={24}
       role="img"
       viewBox="0 0 24 24"
-      xmlns="http://www.w3.org/2000/svg"
-      height={24}
       width={24}
+      xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
       <title>Penpot</title>
@@ -1635,10 +1647,10 @@ export const Icons = {
   ),
   Balsamiq: (props) => (
     <svg
-      viewBox="0 0 319.8 297.8"
-      xmlns="http://www.w3.org/2000/svg"
       height={24}
+      viewBox="0 0 319.8 297.8"
       width={24}
+      xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
       <title>Balsamiq</title>
@@ -1661,7 +1673,7 @@ export const Icons = {
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
-      <rect width="20" height="16" x="2" y="4" rx="2" />
+      <rect height="16" rx="2" width="20" x="2" y="4" />
       <path d="m22 7-8.97 5.7a1.94 1.94 0 01-2.06 0L2 7" />
     </svg>
   ),

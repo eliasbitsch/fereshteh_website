@@ -32,6 +32,13 @@ const config: NextConfig = {
   },
   // Add compression for production
   compress: true,
+  // Configure experimental features for file uploads
+  experimental: {
+    // Increase body size limit for API routes (20MB)
+    serverActions: {
+      bodySizeLimit: "20mb",
+    },
+  },
   // Optimize headers for caching
   async headers() {
     return [
@@ -62,11 +69,7 @@ const config: NextConfig = {
         ...config.resolve.alias,
         canvas: false,
       };
-      config.externals = [
-        ...(config.externals || []),
-        "canvas",
-        "pdfjs-dist",
-      ];
+      config.externals = [...(config.externals || []), "canvas", "pdfjs-dist"];
     }
 
     // Ensure pdfjs-dist is handled correctly
