@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { formatDate, formatRange } from "~/utils/date";
 
-const MONTH_PATTERN = /Jan|January/;
 const YEAR_PATTERN = /2024/;
 
 describe("Date Utilities", () => {

@@ -16,7 +16,9 @@ export function ScrollIndicator() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  if (!isVisible) return null;
+  if (!isVisible) {
+    return null;
+  }
 
   return (
     <div className="absolute -bottom-0 left-1/2 -translate-x-1/2">
