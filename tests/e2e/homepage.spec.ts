@@ -21,8 +21,8 @@ test.describe("Homepage", () => {
   test("should have navigation", async ({ page }) => {
     await page.goto("/");
 
-    // Check for navigation links
-    const nav = page.locator("nav");
+    // Check for navigation links - use first() since there are multiple nav elements
+    const nav = page.locator("nav").first();
     await expect(nav).toBeVisible();
   });
 
