@@ -6,8 +6,8 @@ describe("PortfolioCard Component", () => {
   const mockProject = {
     title: "Test Project",
     slug: "test-project",
-    description: "A test project description",
-    thumbnail: "/test-thumbnail.jpg",
+    subtitle: "A test project subtitle",
+    thumbnailPath: "/test-thumbnail.jpg",
   };
 
   it("should render project title", () => {
@@ -16,10 +16,10 @@ describe("PortfolioCard Component", () => {
     expect(screen.getByText("Test Project")).toBeInTheDocument();
   });
 
-  it("should render project description", () => {
+  it("should render project subtitle", () => {
     render(<PortfolioCard {...mockProject} />);
 
-    expect(screen.getByText("A test project description")).toBeInTheDocument();
+    expect(screen.getByText("A test project subtitle")).toBeInTheDocument();
   });
 
   it("should have correct link", () => {
