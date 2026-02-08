@@ -1,3 +1,6 @@
 {
-  "order": ["SPOONS", "SPEEDSHOT-4"]
+  "order": [
+    "SPEEDSHOT",
+    "test"
+  ]
 }

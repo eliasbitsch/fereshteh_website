@@ -27,6 +27,12 @@ function startBackgroundConversion(pdfPath: string, outputDir: string): void {
     cwd: process.cwd(),
     stdio: "ignore",
     detached: true,
+    env: {
+      ...process.env,
+      PDF_SCALE: process.env.PDF_SCALE || "1",
+      PDF_MAX_DIM: process.env.PDF_MAX_DIM || "2500",
+      PDF_QUALITY: process.env.PDF_QUALITY || "85",
+    },
   });
 
   // Unref to allow parent to exit without waiting
