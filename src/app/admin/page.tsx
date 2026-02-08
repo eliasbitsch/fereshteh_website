@@ -576,7 +576,18 @@ export default function AdminPage() {
   const [authenticated, setAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState<
     "hero" | "about" | "experiences" | "projects"
-  >("hero");
+  >(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("admin-active-tab");
+      if (
+        saved &&
+        ["hero", "about", "experiences", "projects"].includes(saved)
+      ) {
+        return saved as "hero" | "about" | "experiences" | "projects";
+      }
+    }
+    return "hero";
+  });
   const [editingExperience, setEditingExperience] =
     useState<ExperienceContent | null>(null);
   const [message, setMessage] = useState<{
@@ -999,7 +1010,10 @@ export default function AdminPage() {
                     : "text-muted-fg hover:text-fg"
                 }`}
                 key={tab}
-                onClick={() => setActiveTab(tab)}
+                onClick={() => {
+                  setActiveTab(tab);
+                  localStorage.setItem("admin-active-tab", tab);
+                }}
               >
                 {tab}
               </button>
@@ -2100,6 +2114,7 @@ export default function AdminPage() {
 
                     setUploadingPdf(false);
                     await loadProjectPdfs();
+                    await revalidateCache("/"); // Revalidate after PDF upload
                     setMessage({
                       type: "success",
                       text: "Files uploaded! Image conversion running in background.",

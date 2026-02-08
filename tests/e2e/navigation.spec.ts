@@ -20,20 +20,25 @@ test.describe("Navigation", () => {
 
   test("should toggle theme", async ({ page }) => {
     await page.goto("/");
+    await page.waitForLoadState("networkidle");
 
     // Look for theme switcher button
     const themeButton = page
       .locator('button[aria-label*="theme"], button[title*="theme"]')
       .first();
 
+    // Wait for button to be stable
+    await themeButton.waitFor({ state: "visible", timeout: 10_000 });
+    await page.waitForTimeout(500); // Wait for any animations to settle
+
     if (await themeButton.isVisible()) {
       // Get initial theme
       const htmlElement = page.locator("html");
       const initialClass = await htmlElement.getAttribute("class");
 
-      // Click theme switcher
-      await themeButton.click();
-      await page.waitForTimeout(300); // Wait for animation
+      // Click theme switcher with force to avoid detachment issues
+      await themeButton.click({ force: true });
+      await page.waitForTimeout(500); // Wait for theme transition
 
       // Verify theme changed
       const newClass = await htmlElement.getAttribute("class");

@@ -20,7 +20,7 @@ interface PortfolioViewerProps {
 const MIN_ZOOM = 0.5;
 const MAX_ZOOM = 3;
 const ZOOM_STEP = 0.25;
-const BASE_WIDTH = 640; // Smaller default width, better for mobile
+const BASE_WIDTH = 384; // 60% of 640px for better mobile viewing (iPhone 12)
 const ZOOM_ANIMATION_MS = 200;
 
 export function PortfolioViewer({ item }: PortfolioViewerProps) {

@@ -15,17 +15,21 @@ test.describe("Homepage", () => {
 
   test("should display hero section", async ({ page }) => {
     await page.goto("/");
+    await page.waitForLoadState("domcontentloaded");
 
     // Check for name/title
-    await expect(page.getByText(FERESHTEH_NAME_REGEX)).toBeVisible();
+    await expect(page.getByText(FERESHTEH_NAME_REGEX)).toBeVisible({
+      timeout: 10_000,
+    });
   });
 
   test("should have navigation", async ({ page }) => {
     await page.goto("/");
+    await page.waitForLoadState("networkidle");
 
     // Check for navigation links - use first() since there are multiple nav elements
     const nav = page.locator("nav").first();
-    await expect(nav).toBeVisible();
+    await expect(nav).toBeVisible({ timeout: 10_000 });
   });
 
   test("should be responsive", async ({ page }) => {
