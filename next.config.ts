@@ -38,6 +38,9 @@ const config: NextConfig = {
     serverActions: {
       bodySizeLimit: "20mb",
     },
+    // Optimize memory usage for low-resource VPS (1 CPU, 2GB RAM)
+    workerThreads: false,
+    cpus: 1,
   },
   // Optimize headers for caching
   async headers() {
@@ -61,30 +64,6 @@ const config: NextConfig = {
         ],
       },
     ];
-  },
-  webpack: (config, { isServer }) => {
-    // Only alias canvas on the server side to avoid conflicts with browser Canvas API
-    if (isServer) {
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        canvas: false,
-      };
-      config.externals = [...(config.externals || []), "canvas", "pdfjs-dist"];
-    }
-
-    // Ensure pdfjs-dist is handled correctly
-    config.module = config.module || {};
-    config.module.rules = config.module.rules || [];
-    const mjsPattern = /\.m?js$/;
-    config.module.rules.push({
-      test: mjsPattern,
-      type: "javascript/auto",
-      resolve: {
-        fullySpecified: false,
-      },
-    });
-
-    return config;
   },
 };
 

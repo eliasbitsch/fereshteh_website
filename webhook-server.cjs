@@ -29,15 +29,7 @@ function verifySignature(payload, signature) {
 function deploy() {
   console.log(`[${new Date().toISOString()}] Starting deployment...`);
 
-  const commands = [
-    `cd ${DEPLOY_PATH}`,
-    "git fetch origin main",
-    "git reset --hard origin/main",
-    "bun install --frozen-lockfile",
-    `systemctl restart ${SERVICE_NAME}`,
-  ].join(" && ");
-
-  exec(commands, (error, stdout, stderr) => {
+  exec(`${DEPLOY_PATH}/deploy.sh`, { maxBuffer: 1024 * 1024 * 10 }, (error, stdout, stderr) => {
     if (error) {
       console.error(`[${new Date().toISOString()}] Deployment failed:`, error);
       console.error(stderr);
