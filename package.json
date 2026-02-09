@@ -6,8 +6,8 @@
   "scripts": {
     "postinstall": "fumadocs-mdx",
     "dev": "bun --bun run next dev --turbo",
-    "build": "NODE_OPTIONS='--max-old-space-size=1536' next build",
-    "build:static": "NODE_OPTIONS='--max-old-space-size=1536' STATIC_EXPORT=true NEXT_PUBLIC_STATIC_EXPORT=true next build",
+    "build": "NODE_OPTIONS='--max-old-space-size=512' next build",
+    "build:static": "NODE_OPTIONS='--max-old-space-size=512' STATIC_EXPORT=true NEXT_PUBLIC_STATIC_EXPORT=true next build",
     "start": "next start",
     "preview": "next build && next start",
     "format": "biome format --write",

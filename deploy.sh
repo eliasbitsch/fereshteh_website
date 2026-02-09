@@ -13,9 +13,9 @@ git pull origin main
 echo "📦 Installing dependencies..."
 bun install --frozen-lockfile
 
-# Build with memory limit for 2GB VPS
+# Build with memory limit for low memory VPS (826MB)
 echo "🔨 Building..."
-NODE_OPTIONS='--max-old-space-size=1536' bun run build
+NODE_OPTIONS='--max-old-space-size=512' bun run build
 
 # Restart service
 echo "🔄 Restarting service..."

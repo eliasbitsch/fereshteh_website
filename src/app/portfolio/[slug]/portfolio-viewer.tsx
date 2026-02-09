@@ -36,9 +36,6 @@ export function PortfolioViewer({ item }: PortfolioViewerProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const _imageWrapperRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number | null>(null);
-  const isPdfPreview =
-    item.imagePath.toLowerCase().endsWith(".pdf") ||
-    item.imagePath === item.pdfPath;
 
   const handleClose = () => {
     router.push("/#portfolio");
@@ -230,7 +227,7 @@ export function PortfolioViewer({ item }: PortfolioViewerProps) {
               </h1>
             </div>
             <div className="flex shrink-0 items-center gap-1 sm:gap-2">
-              {!isPdfPreview && !isAtTop && (
+              {!isAtTop && (
                 <Button
                   aria-label="Jump to top"
                   className="size-10 sm:size-11"
@@ -241,43 +238,41 @@ export function PortfolioViewer({ item }: PortfolioViewerProps) {
                   <Icons.ArrowUp className="size-5" />
                 </Button>
               )}
-              {!isPdfPreview && (
-                <div className="flex h-10 items-center gap-1 rounded-lg border bg-bg p-1 sm:h-11 sm:gap-1.5 sm:p-1.5">
-                  <Button
-                    aria-label="Zoom out"
-                    className="size-8 sm:size-9"
-                    isDisabled={zoom <= MIN_ZOOM}
-                    onPress={handleZoomOut}
-                    size="icon"
-                    variant="ghost"
-                  >
-                    <Icons.Minus className="size-4 sm:size-5" />
-                  </Button>
-                  <span className="min-w-[3rem] text-center text-xs sm:min-w-[3.5rem] sm:text-sm">
-                    {Math.round(zoom * 100)}%
-                  </span>
-                  <Button
-                    aria-label="Zoom in"
-                    className="size-8 sm:size-9"
-                    isDisabled={zoom >= MAX_ZOOM}
-                    onPress={handleZoomIn}
-                    size="icon"
-                    variant="ghost"
-                  >
-                    <Icons.Plus className="size-4 sm:size-5" />
-                  </Button>
-                  <Button
-                    aria-label="Reset zoom"
-                    className="size-8 sm:size-9"
-                    isDisabled={zoom === 1}
-                    onPress={handleResetZoom}
-                    size="icon"
-                    variant="ghost"
-                  >
-                    <Icons.Maximize className="size-4 sm:size-5" />
-                  </Button>
-                </div>
-              )}
+              <div className="flex h-10 items-center gap-1 rounded-lg border bg-bg p-1 sm:h-11 sm:gap-1.5 sm:p-1.5">
+                <Button
+                  aria-label="Zoom out"
+                  className="size-8 sm:size-9"
+                  isDisabled={zoom <= MIN_ZOOM}
+                  onPress={handleZoomOut}
+                  size="icon"
+                  variant="ghost"
+                >
+                  <Icons.Minus className="size-4 sm:size-5" />
+                </Button>
+                <span className="min-w-[3rem] text-center text-xs sm:min-w-[3.5rem] sm:text-sm">
+                  {Math.round(zoom * 100)}%
+                </span>
+                <Button
+                  aria-label="Zoom in"
+                  className="size-8 sm:size-9"
+                  isDisabled={zoom >= MAX_ZOOM}
+                  onPress={handleZoomIn}
+                  size="icon"
+                  variant="ghost"
+                >
+                  <Icons.Plus className="size-4 sm:size-5" />
+                </Button>
+                <Button
+                  aria-label="Reset zoom"
+                  className="size-8 sm:size-9"
+                  isDisabled={zoom === 1}
+                  onPress={handleResetZoom}
+                  size="icon"
+                  variant="ghost"
+                >
+                  <Icons.Maximize className="size-4 sm:size-5" />
+                </Button>
+              </div>
               <Button
                 className="h-10 sm:h-11"
                 onClick={handleDownload}
@@ -292,16 +287,16 @@ export function PortfolioViewer({ item }: PortfolioViewerProps) {
         </div>
         <div
           className="flex-1 overflow-auto"
-          onMouseDown={isPdfPreview ? undefined : handleMouseDown}
-          onMouseLeave={isPdfPreview ? undefined : handleMouseLeave}
-          onMouseMove={isPdfPreview ? undefined : handleMouseMove}
-          onMouseUp={isPdfPreview ? undefined : handleMouseUp}
-          onScroll={isPdfPreview ? undefined : handleScroll}
-          onWheel={isPdfPreview ? undefined : handleWheel}
+          onMouseDown={handleMouseDown}
+          onMouseLeave={handleMouseLeave}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onScroll={handleScroll}
+          onWheel={handleWheel}
           ref={scrollContainerRef}
           style={{
             cursor:
-              isPdfPreview || zoom <= 1
+              zoom <= 1
                 ? "default"
                 : isDragging
                   ? "grabbing"
@@ -309,30 +304,22 @@ export function PortfolioViewer({ item }: PortfolioViewerProps) {
           }}
         >
           <div className="inline-flex min-h-full min-w-full justify-center p-2 sm:p-4">
-            {isPdfPreview ? (
-              <iframe
-                className="h-full w-full rounded-lg border"
-                src={item.pdfPath}
-                title={item.title}
-              />
-            ) : (
-              <Image
-                alt={item.title}
-                className="h-auto select-none rounded-lg border"
-                draggable={false}
-                height={1600}
-                priority
-                src={item.imagePath}
-                style={{
-                  width: `${imageWidth}px`,
-                  maxWidth: "none",
-                  transition: isAnimatingZoom
-                    ? `width ${ZOOM_ANIMATION_MS}ms cubic-bezier(0.33, 1, 0.68, 1)`
-                    : "none",
-                }}
-                width={1200}
-              />
-            )}
+            <Image
+              alt={item.title}
+              className="h-auto select-none rounded-lg border"
+              draggable={false}
+              height={1600}
+              priority
+              src={item.imagePath}
+              style={{
+                width: `${imageWidth}px`,
+                maxWidth: "none",
+                transition: isAnimatingZoom
+                  ? `width ${ZOOM_ANIMATION_MS}ms cubic-bezier(0.33, 1, 0.68, 1)`
+                  : "none",
+              }}
+              width={1200}
+            />
           </div>
         </div>
       </div>
