@@ -16,6 +16,13 @@ export const env = createEnv({
       .pipe(z.boolean())
       .default(false),
   },
-  experimental__runtimeEnv: {},
+  client: {
+    NEXT_PUBLIC_UMAMI_WEBSITE_ID: z.string().optional(),
+    NEXT_PUBLIC_UMAMI_SHARE_URL: z.string().optional(),
+  },
+  experimental__runtimeEnv: {
+    NEXT_PUBLIC_UMAMI_WEBSITE_ID: process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID,
+    NEXT_PUBLIC_UMAMI_SHARE_URL: process.env.NEXT_PUBLIC_UMAMI_SHARE_URL,
+  },
   emptyStringAsUndefined: true,
 });

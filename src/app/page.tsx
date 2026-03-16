@@ -35,7 +35,7 @@ export default function Home() {
       />
       <section
         className="container max-w-6xl scroll-mt-20 sm:scroll-mt-24"
-        id="portfolio"
+        id="projects"
       >
         <h2 className="mb-6 font-semibold text-xl sm:mb-8 sm:text-2xl md:mb-10 md:text-3xl">
           {sectionsContent?.portfolioTitle || "Portfolio"}

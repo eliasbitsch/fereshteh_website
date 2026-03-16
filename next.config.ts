@@ -42,6 +42,17 @@ const config: NextConfig = {
     workerThreads: false,
     cpus: 1,
   },
+  // Rewrite asset paths to the file-serving API route
+  async rewrites() {
+    return [
+      { source: "/projects/:path(.*\\..*)", destination: "/uploads/projects/:path" },
+      { source: "/projects-jpg/:path*", destination: "/uploads/projects-jpg/:path*" },
+      { source: "/projects-thumbnails/:path*", destination: "/uploads/projects-thumbnails/:path*" },
+      { source: "/portfolio-images/:path*", destination: "/uploads/portfolio-images/:path*" },
+      { source: "/profile-picture/:path*", destination: "/uploads/profile-picture/:path*" },
+      { source: "/documents/:path*", destination: "/uploads/documents/:path*" },
+    ];
+  },
   // Optimize headers for caching
   async headers() {
     return [

@@ -309,7 +309,10 @@ def convert_one(pdf_path, output_dir, base_name):
         render_h = int((h_pt / 72) * dpi)
         print(f"  Page dimensions: {w_pt:.0f}x{h_pt:.0f}pt → {render_w}x{render_h}px")
 
-    write_status(status_path, "converting", 0, total_pages)
+    # Pre-estimate total tiles (may be refined as pages are processed)
+    # For giant/tall pages, tiles > pages, so we track dynamically
+    total_tiles = total_pages  # initial estimate: 1 tile per page
+    write_status(status_path, "converting", 0, total_tiles)
 
     tile_counter = 0
     use_batch = not needs_strip_rendering(w_pt, h_pt, dpi)
@@ -331,6 +334,8 @@ def convert_one(pdf_path, output_dir, base_name):
                 render_w = int((w_pt / 72) * dpi)
                 render_h = int((h_pt / 72) * dpi)
                 num_strips = math.ceil(render_h / STRIP_HEIGHT_PX)
+                # This page produces num_strips tiles instead of 1; adjust total
+                total_tiles += (num_strips - 1)
                 print(f"    Giant page ({render_w}x{render_h}px) → {num_strips} strips (parallel direct rendering)")
 
                 strips_to_render = []
@@ -362,7 +367,7 @@ def convert_one(pdf_path, output_dir, base_name):
                             i, total, t_num = futures[f]
                             size_kb = f.result() / 1024
                             print(f"    Strip {i+1}/{total} → {size_kb:.0f}KB")
-                            write_status(status_path, "converting", t_num, total_pages)
+                            write_status(status_path, "converting", t_num, total_tiles)
 
                 tile_counter += num_strips
 
@@ -383,6 +388,8 @@ def convert_one(pdf_path, output_dir, base_name):
                     # Tall but not giant — slice then convert
                     strips = slice_jpeg_into_strips(jpeg_path, STRIP_HEIGHT_PX, tmpdir, f"p{page_num}")
                     num_strips = len(strips)
+                    # This page produces num_strips tiles instead of 1; adjust total
+                    total_tiles += (num_strips - 1)
                     print(f"    Tall page ({page_w}x{page_h}) → {num_strips} strips")
 
                     strip_args = [(i, sp, sw, sh) for i, (sp, sw, sh) in enumerate(strips)]
@@ -402,7 +409,7 @@ def convert_one(pdf_path, output_dir, base_name):
                         futures = {executor.submit(_convert_strip, a): a for a in strip_args}
                         for future in as_completed(futures):
                             t_num = future.result()
-                            write_status(status_path, "converting", t_num, total_pages)
+                            write_status(status_path, "converting", t_num, total_tiles)
 
                     tile_counter += num_strips
                 else:
@@ -412,14 +419,14 @@ def convert_one(pdf_path, output_dir, base_name):
 
                     if os.path.exists(out_path) and os.path.getsize(out_path) > 0:
                         print(f"    Page {page_num} — already exists, skipping")
-                        write_status(status_path, "converting", tile_counter, tile_counter)
+                        write_status(status_path, "converting", tile_counter, total_tiles)
                         continue
 
                     convert_to_webp(jpeg_path, out_path)
                     size_kb = os.path.getsize(out_path) / 1024
                     print(f"    {page_w}x{page_h} → {size_kb:.0f}KB")
 
-            write_status(status_path, "converting", tile_counter, tile_counter)
+            write_status(status_path, "converting", tile_counter, total_tiles)
 
     # Clean up old tiles beyond the new tile count
     old_tile_num = tile_counter + 1
@@ -440,7 +447,7 @@ def convert_one(pdf_path, output_dir, base_name):
         if os.path.exists(legacy):
             os.remove(legacy)
 
-    write_status(status_path, "done", tile_counter, tile_counter)
+    write_status(status_path, "done", total_tiles, total_tiles)
     print(f"  Done: {tile_counter} tile(s)")
 
 

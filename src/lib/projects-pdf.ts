@@ -7,7 +7,9 @@ export interface ProjectPdfItem {
   title: string;
   subtitle?: string | null;
   pdfPath: string;
+  webPdfPath?: string;
   imagePath: string;
+  imagePaths: string[];
   thumbnailPath: string;
 }
 
@@ -103,10 +105,20 @@ export function getProjectPdfItems(): ProjectPdfItem[] {
 
   // Read all PDF files from projects directory
   const files = fs.readdirSync(projectsDir);
-  const pdfFiles = files.filter((file) => file.toLowerCase().endsWith(".pdf"));
+  const pdfFiles = files.filter(
+    (file) => file.toLowerCase().endsWith(".pdf") && !file.toLowerCase().endsWith(".web.pdf")
+  );
 
   // Map each PDF to a project item
   const metadata = getProjectsMetadata();
+
+  // Read projects-jpg directory listing once for page file detection
+  let jpgDirFiles: string[] = [];
+  if (fs.existsSync(projectsJpgDir)) {
+    try {
+      jpgDirFiles = fs.readdirSync(projectsJpgDir);
+    } catch {}
+  }
 
   const items: ProjectPdfItem[] = pdfFiles.map((pdfFile) => {
     const baseName = path.basename(pdfFile, ".pdf");
@@ -119,7 +131,23 @@ export function getProjectPdfItems(): ProjectPdfItem[] {
     // Generate all possible filename variations using the utility function
     const filenameVariations = getFilenameVariations(baseName, meta.title);
 
-    // Try to find a matching JPG image (full-size)
+    // Try to find multi-page images first (e.g., project-page-001.jpg)
+    let imagePaths: string[] = [];
+    for (const variation of filenameVariations) {
+      const escapedVar = variation.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const pagePattern = new RegExp(
+        `^${escapedVar}-page-\\d{3}\\.(webp|avif|jpg|png)$`
+      );
+      const pageFiles = jpgDirFiles
+        .filter((f) => pagePattern.test(f))
+        .sort();
+      if (pageFiles.length > 0) {
+        imagePaths = pageFiles.map((f) => withBasePath(`/projects-jpg/${f}`));
+        break;
+      }
+    }
+
+    // Try to find a matching single image (legacy/fallback)
     let imagePath = withBasePath(`/projects/${pdfFile}`); // Fallback to PDF
 
     if (fs.existsSync(projectsJpgDir)) {
@@ -138,8 +166,15 @@ export function getProjectPdfItems(): ProjectPdfItem[] {
       }
     }
 
-    // Try to find a custom thumbnail, fallback to full-size image
-    let thumbnailPath = imagePath;
+    // If multi-page images found, use first as imagePath; otherwise wrap single image
+    if (imagePaths.length > 0) {
+      imagePath = imagePaths[0];
+    } else {
+      imagePaths = [imagePath];
+    }
+
+    // Try to find a custom thumbnail (no fallback to full-size image)
+    let thumbnailPath = "";
     const thumbnailExtensions = [".png", ".jpg", ".jpeg", ".webp", ".avif"];
 
     // First check projects-thumbnails directory (custom uploads)
@@ -163,7 +198,7 @@ export function getProjectPdfItems(): ProjectPdfItem[] {
     }
 
     // Also check legacy thumbnails directory if no custom thumbnail found
-    if (thumbnailPath === imagePath) {
+    if (!thumbnailPath) {
       const legacyThumbnailsDir = path.join(
         process.cwd(),
         "public",
@@ -190,11 +225,20 @@ export function getProjectPdfItems(): ProjectPdfItem[] {
       }
     }
 
+    // Check if web-optimized PDF exists
+    const webPdfFile = pdfFile.replace(/\.pdf$/i, ".web.pdf");
+    const webPdfFullPath = path.join(projectsDir, webPdfFile);
+    const webPdfPath = fs.existsSync(webPdfFullPath)
+      ? withBasePath(`/projects/${webPdfFile}`)
+      : undefined;
+
     return {
       title: meta.title && meta.title.length > 0 ? meta.title : title,
       subtitle: meta.subtitle || null,
       pdfPath: withBasePath(`/projects/${pdfFile}`),
+      webPdfPath,
       imagePath,
+      imagePaths,
       thumbnailPath,
     };
   });
@@ -235,35 +279,99 @@ export function deleteProjectPdf(title: string): void {
     "projects-thumbnails"
   );
 
-  // Delete PDF
+  // Find and delete the PDF and web-optimized version
+  let deleted = false;
   const pdfPath = path.join(projectsDir, `${title}.pdf`);
+  const webPdfPath = path.join(projectsDir, `${title}.web.pdf`);
   if (fs.existsSync(pdfPath)) {
     fs.unlinkSync(pdfPath);
+    deleted = true;
+  }
+  if (fs.existsSync(webPdfPath)) {
+    fs.unlinkSync(webPdfPath);
   }
 
-  const lowercaseBase = title.toLowerCase().replace(/\s+/g, "-");
+  // If not found by title, search by matching metadata title or normalized name
+  if (!deleted && fs.existsSync(projectsDir)) {
+    const metadata = getProjectsMetadata();
+    const files = fs.readdirSync(projectsDir).filter((f) => f.toLowerCase().endsWith(".pdf"));
+    for (const file of files) {
+      const baseName = path.basename(file, ".pdf");
+      const meta = metadata[baseName] || metadata[normalizeProjectFilename(baseName)] || {};
+      if (meta.title === title || baseName === title || normalizeProjectFilename(baseName) === normalizeProjectFilename(title)) {
+        fs.unlinkSync(path.join(projectsDir, file));
+        // Also delete web-optimized version
+        const webFile = file.replace(/\.pdf$/i, ".web.pdf");
+        const webFilePath = path.join(projectsDir, webFile);
+        if (fs.existsSync(webFilePath)) {
+          fs.unlinkSync(webFilePath);
+        }
+        break;
+      }
+    }
+  }
+
   const extensions = [".jpg", ".jpeg", ".png", ".webp", ".avif"];
 
-  // Also try to delete associated image
+  // Build list of base name variations to try for image/thumbnail cleanup
+  const baseVariations = new Set<string>();
+  baseVariations.add(title.toLowerCase().replace(/\s+/g, "-"));
+  baseVariations.add(normalizeProjectFilename(title));
+  // Also find original filename base via metadata reverse lookup
+  if (fs.existsSync(projectsDir)) {
+    const metadata = getProjectsMetadata();
+    for (const [key, meta] of Object.entries(metadata)) {
+      if ((meta as { title?: string }).title === title) {
+        baseVariations.add(key.toLowerCase().replace(/\s+/g, "-"));
+        baseVariations.add(normalizeProjectFilename(key));
+      }
+    }
+  }
+
+  // Also try to delete associated image(s)
   if (fs.existsSync(projectsJpgDir)) {
-    for (const ext of extensions) {
-      const imagePath = path.join(projectsJpgDir, `${lowercaseBase}${ext}`);
-      if (fs.existsSync(imagePath)) {
-        fs.unlinkSync(imagePath);
-        break;
+    for (const base of baseVariations) {
+      // Delete single legacy image
+      for (const ext of extensions) {
+        const imagePath = path.join(projectsJpgDir, `${base}${ext}`);
+        if (fs.existsSync(imagePath)) {
+          fs.unlinkSync(imagePath);
+        }
+      }
+
+      // Delete multi-page images (e.g., project-page-001.jpg)
+      try {
+        const files = fs.readdirSync(projectsJpgDir);
+        const escapedBase = base.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const pagePattern = new RegExp(
+          `^${escapedBase}-page-\\d{3}\\.(webp|avif|jpg|png)$`
+        );
+        for (const file of files) {
+          if (pagePattern.test(file)) {
+            fs.unlinkSync(path.join(projectsJpgDir, file));
+          }
+        }
+      } catch {}
+
+      // Delete status file
+      const statusFile = path.join(projectsJpgDir, `${base}.status.json`);
+      if (fs.existsSync(statusFile)) {
+        try {
+          fs.unlinkSync(statusFile);
+        } catch {}
       }
     }
   }
 
   // Also try to delete associated thumbnail
   if (fs.existsSync(thumbnailsDir)) {
-    const candidates = [title, lowercaseBase];
-    outer: for (const candidate of candidates) {
+    for (const base of baseVariations) {
       for (const ext of extensions) {
-        const thumbPath = path.join(thumbnailsDir, `${candidate}${ext}`);
+        const thumbPath = path.join(thumbnailsDir, `${base}${ext}`);
         if (fs.existsSync(thumbPath)) {
-          fs.unlinkSync(thumbPath);
-          break outer;
+          try {
+            fs.unlinkSync(thumbPath);
+          } catch {}
         }
       }
     }

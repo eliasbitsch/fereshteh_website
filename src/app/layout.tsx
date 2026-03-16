@@ -1,6 +1,7 @@
 import "~/styles/globals.css";
 
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { LayoutWrapper } from "~/components/layout-wrapper";
 import { Providers } from "~/components/providers";
 import { fonts } from "~/config/fonts";
@@ -44,6 +45,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       suppressHydrationWarning
     >
+      <head>
+        {process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID && (
+          <Script
+            async
+            defer
+            data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+            src="https://analytics.fereshteh-hosseini.com/script.js"
+            strategy="afterInteractive"
+          />
+        )}
+      </head>
       <body>
         <noscript>
           <style>

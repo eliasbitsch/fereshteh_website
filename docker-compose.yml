@@ -1,0 +1,95 @@
+services:
+  fereshteh-website:
+    image: fereshteh-website:latest
+    container_name: fereshteh-website
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: '4.0'
+        reservations:
+          memory: 256M
+    env_file:
+      - path: .env
+        required: false
+    networks:
+      - web
+    volumes:
+      - ./public/projects:/app/public/projects
+      - ./public/projects-jpg:/app/public/projects-jpg
+      - ./public/projects-thumbnails:/app/public/projects-thumbnails
+      - ./public/portfolio-images:/app/public/portfolio-images
+      - ./public/profile-picture:/app/public/profile-picture
+      - ./public/documents:/app/public/documents
+      - ./src/content/data:/app/src/content/data
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.fereshteh-website.rule=Host(`fereshteh-hosseini.com`)
+      - traefik.http.routers.fereshteh-website.entrypoints=websecure
+      - traefik.http.routers.fereshteh-website.tls.certresolver=letsencrypt
+      - traefik.http.services.fereshteh-website.loadbalancer.server.port=3000
+
+  umami-db:
+    image: postgres:16-alpine
+    container_name: umami-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: umami
+      POSTGRES_USER: umami
+      POSTGRES_PASSWORD: ${UMAMI_DB_PASSWORD}
+    volumes:
+      - umami-db-data:/var/lib/postgresql/data
+    networks:
+      - umami-internal
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: '0.5'
+        reservations:
+          memory: 32M
+    command: >
+      postgres
+      -c shared_buffers=32MB
+      -c work_mem=2MB
+      -c maintenance_work_mem=16MB
+      -c effective_cache_size=64MB
+      -c max_connections=20
+      -c wal_buffers=1MB
+
+  umami:
+    image: ghcr.io/umami-software/umami:postgresql-latest
+    container_name: umami
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://umami:${UMAMI_DB_PASSWORD}@umami-db:5432/umami
+      APP_SECRET: ${UMAMI_APP_SECRET}
+      DISABLE_TELEMETRY: 1
+    depends_on:
+      - umami-db
+    networks:
+      - web
+      - umami-internal
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '1.0'
+        reservations:
+          memory: 64M
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.umami.rule=Host(`analytics.fereshteh-hosseini.com`)
+      - traefik.http.routers.umami.entrypoints=websecure
+      - traefik.http.routers.umami.tls.certresolver=letsencrypt
+      - traefik.http.services.umami.loadbalancer.server.port=3000
+
+networks:
+  web:
+    external: true
+  umami-internal:
+    driver: bridge
+
+volumes:
+  umami-db-data:

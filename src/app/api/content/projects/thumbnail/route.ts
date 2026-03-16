@@ -103,10 +103,49 @@ export async function POST(request: Request) {
       `[Thumbnail Upload] Saved original: ${normalizedTitle}${fileExt}`
     );
 
-    // Create AVIF thumbnail (400px width, cover). Use higher quality for better visuals.
+    // Create AVIF thumbnail at 16:9 ratio to match homepage cards
     try {
-      const thumbBuffer = await sharp(buffer)
-        .resize({ width: 400, height: 400, fit: "cover" })
+      const cropDataStr = formData.get("cropData") as string | null;
+      let pipeline = sharp(buffer);
+      const meta = await sharp(buffer).metadata();
+      const imgW = meta.width || 800;
+      const imgH = meta.height || 450;
+
+      if (cropDataStr) {
+        // Apply crop based on zoom/pan from the preview
+        const crop = JSON.parse(cropDataStr) as {
+          zoom: number;
+          panX: number;
+          panY: number;
+          containerWidth: number;
+          containerHeight: number;
+        };
+
+        // Calculate the visible region in image coordinates
+        const scaleX = imgW / crop.containerWidth;
+        const scaleY = imgH / crop.containerHeight;
+        // Use the smaller scale (cover behavior)
+        const coverScale = Math.max(scaleX, scaleY);
+
+        const visibleW = (crop.containerWidth / crop.zoom) * coverScale;
+        const visibleH = (crop.containerHeight / crop.zoom) * coverScale;
+
+        // Center offset from cover positioning
+        const offsetX = (imgW - crop.containerWidth * coverScale) / 2;
+        const offsetY = (imgH - crop.containerHeight * coverScale) / 2;
+
+        const left = Math.max(0, Math.round(offsetX + imgW / 2 - visibleW / 2 - (crop.panX / crop.zoom) * coverScale));
+        const top = Math.max(0, Math.round(offsetY + imgH / 2 - visibleH / 2 - (crop.panY / crop.zoom) * coverScale));
+        const width = Math.min(Math.round(visibleW), imgW - left);
+        const height = Math.min(Math.round(visibleH), imgH - top);
+
+        if (width > 0 && height > 0) {
+          pipeline = pipeline.extract({ left, top, width, height });
+        }
+      }
+
+      const thumbBuffer = await pipeline
+        .resize({ width: 800, height: 450, fit: "cover" })
         .avif({ quality: 85, effort: 6 })
         .toBuffer();
 

@@ -1,6 +1,6 @@
-import { spawn } from "node:child_process";
-import { existsSync } from "node:fs";
-import { mkdir, writeFile } from "node:fs/promises";
+import { execSync, spawn } from "node:child_process";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdir, rename, unlink, writeFile } from "node:fs/promises";
 import { basename, join } from "node:path";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
@@ -15,30 +15,70 @@ async function checkAuth(): Promise<boolean> {
   return validateSession(token) !== null;
 }
 
-function startBackgroundConversion(pdfPath: string, outputDir: string): void {
-  const baseName = basename(pdfPath, ".pdf");
-  // Replace spaces with hyphens for URL-safe filenames
-  const safeBaseName = baseName.toLowerCase().replace(/\s+/g, "-");
-  const outputPath = join(outputDir, `${safeBaseName}.jpg`);
-  const scriptPath = join(process.cwd(), "scripts", "convert-single-pdf.ts");
+function compressPdf(inputPath: string, outputPath: string): boolean {
+  try {
+    execSync(
+      `nice -n 19 gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.5 -dNOPAUSE -dBATCH -dSAFER -dEmbedAllFonts=true -dSubsetFonts=true -dCompressFonts=true -dFastWebView=true -sOutputFile='${outputPath}' '${inputPath}'`,
+      { timeout: 300_000, stdio: "pipe" }
+    );
+    return true;
+  } catch (err) {
+    console.error("PDF compression failed:", err);
+    return false;
+  }
+}
 
-  // Spawn detached process that runs in background
-  const child = spawn("bun", ["run", scriptPath, pdfPath, outputPath], {
+const LOCK_FILE = "/tmp/pdf-convert.lock";
+const QUEUE_FILE = "/tmp/pdf-convert-queue.json";
+
+function isWorkerRunning(): boolean {
+  if (!existsSync(LOCK_FILE)) return false;
+  try {
+    const pid = parseInt(readFileSync(LOCK_FILE, "utf-8").trim(), 10);
+    // Check if process is alive
+    process.kill(pid, 0);
+    return true;
+  } catch {
+    // Process is dead — stale lock
+    return false;
+  }
+}
+
+function addToQueue(pdfPath: string, outputDir: string, baseName: string): void {
+  let queue: Array<{ pdfPath: string; outputDir: string; baseName: string }> = [];
+  try {
+    if (existsSync(QUEUE_FILE)) {
+      queue = JSON.parse(readFileSync(QUEUE_FILE, "utf-8"));
+    }
+  } catch {}
+  // Don't add duplicates
+  if (!queue.some((j) => j.baseName === baseName)) {
+    queue.push({ pdfPath, outputDir, baseName });
+    writeFileSync(QUEUE_FILE, JSON.stringify(queue));
+  }
+  // Write queued status
+  const statusPath = join(outputDir, `${baseName}.status.json`);
+  writeFileSync(statusPath, JSON.stringify({ status: "queued", currentPage: 0, totalPages: 0 }));
+}
+
+function startPreviewGeneration(pdfPath: string, outputDir: string, baseName: string): void {
+  // Add job to queue
+  addToQueue(pdfPath, outputDir, baseName);
+
+  // Only spawn a worker if none is running
+  if (isWorkerRunning()) {
+    console.log(`Worker already running. Queued ${baseName} for preview generation.`);
+    return;
+  }
+
+  const scriptPath = join(process.cwd(), "scripts", "convert-pdf.py");
+  const child = spawn("python3", [scriptPath, pdfPath, outputDir, baseName], {
     cwd: process.cwd(),
     stdio: "ignore",
     detached: true,
-    env: {
-      ...process.env,
-      PDF_SCALE: process.env.PDF_SCALE || "1",
-      PDF_MAX_DIM: process.env.PDF_MAX_DIM || "2500",
-      PDF_QUALITY: process.env.PDF_QUALITY || "85",
-    },
   });
-
-  // Unref to allow parent to exit without waiting
   child.unref();
-
-  console.log(`Started background conversion for ${pdfPath}`);
+  console.log(`Started preview worker for ${baseName}`);
 }
 
 export async function POST(request: Request) {
@@ -62,31 +102,46 @@ export async function POST(request: Request) {
     }
 
     const projectsDir = join(process.cwd(), "public", "projects");
-    const jpgDir = join(process.cwd(), "public", "projects-jpg");
 
-    // Ensure directories exist
     if (!existsSync(projectsDir)) {
       await mkdir(projectsDir, { recursive: true });
     }
-    if (!existsSync(jpgDir)) {
-      await mkdir(jpgDir, { recursive: true });
-    }
 
-    // Convert file to buffer
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Save PDF file
-    const pdfPath = join(projectsDir, file.name);
-    await writeFile(pdfPath, buffer);
+    // Save original PDF to a temp location
+    const originalPath = join(projectsDir, `${file.name}.original`);
+    const finalPath = join(projectsDir, file.name);
+    await writeFile(originalPath, buffer);
 
-    // Start conversion in background (don't wait)
-    startBackgroundConversion(pdfPath, jpgDir);
+    // Compress synchronously — the admin waits, but visitors get fast loads
+    console.log(`Compressing ${file.name} (${(buffer.length / 1024 / 1024).toFixed(1)}MB)...`);
+    const compressed = compressPdf(originalPath, finalPath);
+
+    if (compressed) {
+      // Delete the original, keep compressed version
+      await unlink(originalPath);
+      const { size } = await import("node:fs").then(fs => fs.statSync(finalPath));
+      console.log(`Compressed ${file.name}: ${(buffer.length / 1024 / 1024).toFixed(1)}MB → ${(size / 1024 / 1024).toFixed(1)}MB`);
+    } else {
+      // Compression failed — use the original
+      await rename(originalPath, finalPath);
+      console.log(`Compression failed for ${file.name}, using original`);
+    }
+
+    // Generate preview images in background (for instant loading)
+    const jpgDir = join(process.cwd(), "public", "projects-jpg");
+    if (!existsSync(jpgDir)) {
+      await mkdir(jpgDir, { recursive: true });
+    }
+    const safeBaseName = basename(file.name, ".pdf").toLowerCase().replace(/\s+/g, "-");
+    startPreviewGeneration(finalPath, jpgDir, safeBaseName);
 
     return NextResponse.json({
       success: true,
       filename: file.name,
-      message: "File uploaded. Image conversion started in background.",
+      message: compressed ? "File uploaded and optimized." : "File uploaded (optimization failed, using original).",
     });
   } catch (error) {
     console.error("Upload error:", error);
